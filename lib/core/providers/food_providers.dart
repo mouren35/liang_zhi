@@ -7,6 +7,7 @@ import 'package:liangzhi/shared/models/food.dart';
 final StreamProvider<List<Food>> foodListProvider = StreamProvider<List<Food>>(
   (Ref ref) => ref.watch(foodRepositoryProvider).watchActiveFoods(),
   name: 'foodListProvider',
+  retry: (int retryCount, Object error) => null,
 );
 
 final foodDetailProvider = FutureProvider.family<Food, String>(

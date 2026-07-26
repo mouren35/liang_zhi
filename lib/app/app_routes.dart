@@ -77,7 +77,10 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
               GoRoute(
                 path: AppRoutes.foods,
                 name: 'foods',
-                builder: (BuildContext context, GoRouterState state) => const FoodsPage(),
+                builder: (BuildContext context, GoRouterState state) => FoodsPage(
+                  onAddFood: () => context.push(AppRoutes.addFood),
+                  onOpenFood: (String id) => context.push(AppRoutes.foodDetail(id)),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: ':foodId',
