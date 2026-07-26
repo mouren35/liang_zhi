@@ -9,6 +9,8 @@ import 'package:liangzhi/features/mine/mine_page.dart';
 import 'package:liangzhi/features/scan/scan_page.dart';
 import 'package:liangzhi/app/app_shell.dart';
 import 'package:liangzhi/app/route_error_page.dart';
+import 'package:liangzhi/app/app_config.dart';
+import 'package:liangzhi/core/errors/app_exception.dart';
 
 abstract final class AppRoutes {
   static const String home = '/home';
@@ -113,7 +115,17 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
               GoRoute(
                 path: AppRoutes.mine,
                 name: 'mine',
-                builder: (BuildContext context, GoRouterState state) => const MinePage(),
+                builder: (BuildContext context, GoRouterState state) => MinePage(
+                  config: AppConfig.current,
+                  onOpenNotificationSettings: () {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('通知设置正在准备中')));
+                  },
+                  onClearData: () async {
+                    throw const DatabaseUnavailableException('清除服务正在准备中');
+                  },
+                ),
               ),
             ],
           ),
