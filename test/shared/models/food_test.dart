@@ -60,6 +60,23 @@ void main() {
       expect(parseLocalDate('2024-02-29'), DateTime(2024, 2, 29));
     });
   });
+
+  group('FoodStatus', () {
+    test('三个持久状态双向映射稳定', () {
+      expect(FoodStatus.fromStorage('active'), FoodStatus.active);
+      expect(FoodStatus.fromStorage('consumed'), FoodStatus.consumed);
+      expect(FoodStatus.fromStorage('discarded'), FoodStatus.discarded);
+      expect(FoodStatus.values.map((FoodStatus item) => item.storageValue), <String>[
+        'active',
+        'consumed',
+        'discarded',
+      ]);
+    });
+
+    test('未知状态返回可控格式错误', () {
+      expect(() => FoodStatus.fromStorage('expired'), throwsFormatException);
+    });
+  });
 }
 
 Food _food({
