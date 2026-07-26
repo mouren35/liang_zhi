@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/core/database/app_database.dart';
+import 'package:liangzhi/core/database/default_data.dart';
 
 void main() {
   late AppDatabase database;
@@ -214,6 +215,27 @@ void main() {
         'idx_foods_barcode',
       ]),
     );
+  });
+
+  test('默认分类与位置初始化幂等且包含稳定其他项', () async {
+    final DateTime fixedTime = DateTime.utc(2026, 7, 26);
+    await initializeDefaultData(database, now: fixedTime);
+    await initializeDefaultData(database, now: fixedTime);
+
+    final List<Category> categories = await database.select(database.categories).get();
+    final List<Location> locations = await database.select(database.locations).get();
+
+    expect(categories, hasLength(11));
+    expect(locations, hasLength(6));
+    expect(
+      categories.singleWhere((Category item) => item.id == DefaultIds.categoryOther).name,
+      '其他',
+    );
+    expect(
+      locations.singleWhere((Location item) => item.id == DefaultIds.locationOther).name,
+      '其他',
+    );
+    expect(categories.every((Category item) => item.isSystem), isTrue);
   });
 
   test('空迁移入口不会丢失旧数据', () async {
