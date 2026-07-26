@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/global_error_handler.dart';
+import 'package:liangzhi/core/database/app_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as timezone_data;
 
@@ -29,9 +30,7 @@ Future<void> bootstrap({
 }
 
 Future<void> _initializeDatabase() async {
-  // The single Drift database is opened by the overridden provider when the
-  // database layer is installed. Keeping the hook here makes startup ordering
-  // explicit and testable.
+  await AppDatabase.instance.ensureOpen();
 }
 
 Future<void> _initializeSettings() async {
