@@ -30,3 +30,11 @@ Tests use Flutter's `flutter_test` framework. Name files with the `_test.dart` s
 Use the repository's established format: `<type>(<scope>): <subject>`, for example `feat(学习计划): 新增每日任务列表`. Common types include `feat`, `fix`, `test`, `docs`, `refactor`, and `chore`. Keep commits focused and subjects concise.
 
 Do not push directly to `main` or `master`; use a development branch and pull request. PRs should explain the purpose and key changes, link relevant issues, list verification commands, and include screenshots or recordings for visible UI changes. Resolve conflicts locally and request at least one review before merging.
+
+## Agent-Specific Instructions
+
+These rules apply before and after agent-driven implementation work:
+
+- Always read `memory_bank/architecture.md` in full before writing any code. The document must include the entire database schema.
+- Always read `memory_bank/prd.md` in full before writing any code.
+- After adding a major feature or completing a milestone, update `memory_bank/architecture.md`.
