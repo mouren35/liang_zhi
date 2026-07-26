@@ -91,6 +91,15 @@
 - 未解决问题：无；
 - 下一步骤：步骤 5，建立基础依赖清单。
 
+### 步骤 5：建立基础依赖清单
+
+- 提交：本步骤提交；
+- 修改文件：`pubspec.yaml`、`pubspec.lock`、`memory_bank/progress.md`；
+- 实际验证：使用 Flutter Pub 解析运行与开发依赖，并检查依赖清单；
+- 结果：Riverpod、go_router、Drift/SQLite、设置、扫码、HTTP、通知、时区、生成器、Clock 与集成测试依赖解析成功；
+- 未解决问题：无；
+- 下一步骤：步骤 6，启用统一静态检查规则。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
