@@ -75,4 +75,27 @@ void main() {
 
     expect(find.byType(FoodsPage).evaluate().single, same(originalFoodsElement));
   });
+
+  testWidgets('详情返回恢复全部食物分支与原页面', (WidgetTester tester) async {
+    final GoRouter router = createAppRouter(initialLocation: AppRoutes.foods);
+    await tester.pumpWidget(
+      LiangZhiApp(
+        router: router,
+        config: AppConfig(
+          environment: AppEnvironment.production,
+          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        ),
+      ),
+    );
+    final Element originalFoodsElement = find.byType(FoodsPage).evaluate().single;
+
+    router.push(AppRoutes.foodDetail('food-1'));
+    await tester.pumpAndSettle();
+    expect(find.text('食物详情：food-1'), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(router.routeInformationProvider.value.uri.path, AppRoutes.foods);
+    expect(find.byType(FoodsPage).evaluate().single, same(originalFoodsElement));
+  });
 }
