@@ -93,7 +93,15 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
                           onReturnHome: () => context.go(AppRoutes.home),
                         );
                       }
-                      return FoodDetailPage(foodId: foodId);
+                      return FoodDetailPage(
+                        foodId: foodId,
+                        onBack: () => context.pop(),
+                        onEdit: () {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('编辑能力将在后续版本完善')));
+                        },
+                      );
                     },
                   ),
                 ],

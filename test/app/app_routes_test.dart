@@ -27,7 +27,7 @@ void main() {
       (AppRoutes.scan, '扫码添加'),
       (AppRoutes.foods, '全部食物'),
       (AppRoutes.addFood, '手动添加食物'),
-      (AppRoutes.foodDetail('food-1'), '食物详情：food-1'),
+      (AppRoutes.foodDetail('food-1'), '食品不存在或已经删除'),
       (AppRoutes.mine, '我的'),
     ]) {
       router.go(path);
@@ -93,7 +93,7 @@ void main() {
 
     router.push(AppRoutes.foodDetail('food-1'));
     await tester.pumpAndSettle();
-    expect(find.text('食物详情：food-1'), findsOneWidget);
+    expect(find.text('食品不存在或已经删除'), findsOneWidget);
 
     router.pop();
     await tester.pumpAndSettle();

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liangzhi/core/providers/repository_providers.dart';
+import 'package:liangzhi/core/errors/app_exception.dart';
 import 'package:liangzhi/shared/models/food.dart';
 import 'package:liangzhi/shared/repositories/food_repository.dart';
 
@@ -23,7 +24,7 @@ base class EmptyFoodRepository implements FoodRepository {
   Future<List<Food>> getActiveFoods() async => <Food>[];
 
   @override
-  Future<Food> getById(String id) => throw StateError('not found');
+  Future<Food> getById(String id) => throw const DataNotFoundException();
 
   @override
   Future<void> softDelete(String id, {required DateTime deletedAt}) async {}
