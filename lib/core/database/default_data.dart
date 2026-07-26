@@ -1,10 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:liangzhi/core/database/app_database.dart';
-
-abstract final class DefaultIds {
-  static const String categoryOther = 'category_other';
-  static const String locationOther = 'location_other';
-}
+import 'package:liangzhi/shared/constants/default_ids.dart';
 
 const List<(String, String)> _defaultCategories = <(String, String)>[
   ('category_staple', '主食'),
@@ -33,30 +29,34 @@ Future<void> initializeDefaultData(AppDatabase database, {DateTime? now}) async 
   final int timestamp = (now ?? DateTime.now()).toUtc().millisecondsSinceEpoch;
   await database.transaction(() async {
     for (final (int index, (String, String) item) in _defaultCategories.indexed) {
-      await database.into(database.categories).insert(
-        CategoriesCompanion.insert(
-          id: item.$1,
-          name: item.$2,
-          sortOrder: Value<int>(index),
-          isSystem: const Value<bool>(true),
-          createdAt: timestamp,
-          updatedAt: timestamp,
-        ),
-        mode: InsertMode.insertOrIgnore,
-      );
+      await database
+          .into(database.categories)
+          .insert(
+            CategoriesCompanion.insert(
+              id: item.$1,
+              name: item.$2,
+              sortOrder: Value<int>(index),
+              isSystem: const Value<bool>(true),
+              createdAt: timestamp,
+              updatedAt: timestamp,
+            ),
+            mode: InsertMode.insertOrIgnore,
+          );
     }
     for (final (int index, (String, String) item) in _defaultLocations.indexed) {
-      await database.into(database.locations).insert(
-        LocationsCompanion.insert(
-          id: item.$1,
-          name: item.$2,
-          sortOrder: Value<int>(index),
-          isSystem: const Value<bool>(true),
-          createdAt: timestamp,
-          updatedAt: timestamp,
-        ),
-        mode: InsertMode.insertOrIgnore,
-      );
+      await database
+          .into(database.locations)
+          .insert(
+            LocationsCompanion.insert(
+              id: item.$1,
+              name: item.$2,
+              sortOrder: Value<int>(index),
+              isSystem: const Value<bool>(true),
+              createdAt: timestamp,
+              updatedAt: timestamp,
+            ),
+            mode: InsertMode.insertOrIgnore,
+          );
     }
   });
 }

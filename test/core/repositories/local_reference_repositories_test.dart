@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/core/database/app_database.dart';
 import 'package:liangzhi/core/database/default_data.dart';
 import 'package:liangzhi/core/repositories/local_reference_repositories.dart';
+import 'package:liangzhi/shared/constants/default_ids.dart';
 
 void main() {
   late AppDatabase database;

@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:liangzhi/core/database/app_database.dart';
-import 'package:liangzhi/core/database/default_data.dart';
+import 'package:liangzhi/shared/constants/default_ids.dart';
 import 'package:liangzhi/core/errors/app_exception.dart';
 import 'package:liangzhi/shared/models/reference_item.dart';
 import 'package:liangzhi/shared/repositories/reference_data_repository.dart';
@@ -23,8 +23,7 @@ final class LocalCategoryRepository implements CategoryRepository {
               .get();
       return List<ReferenceItem>.unmodifiable(
         rows.map(
-          (Category row) =>
-              ReferenceItem(id: row.id, name: row.name, isSystem: row.isSystem),
+          (Category row) => ReferenceItem(id: row.id, name: row.name, isSystem: row.isSystem),
         ),
       );
     } on Object {
@@ -61,8 +60,7 @@ final class LocalLocationRepository implements LocationRepository {
               .get();
       return List<ReferenceItem>.unmodifiable(
         rows.map(
-          (Location row) =>
-              ReferenceItem(id: row.id, name: row.name, isSystem: row.isSystem),
+          (Location row) => ReferenceItem(id: row.id, name: row.name, isSystem: row.isSystem),
         ),
       );
     } on Object {

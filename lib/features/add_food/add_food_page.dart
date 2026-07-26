@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:liangzhi/core/database/default_data.dart';
 import 'package:liangzhi/core/providers/food_providers.dart';
 import 'package:liangzhi/core/providers/reference_providers.dart';
+import 'package:liangzhi/shared/constants/default_ids.dart';
 import 'package:liangzhi/shared/design/app_colors.dart';
 import 'package:liangzhi/shared/design/app_dimensions.dart';
 import 'package:liangzhi/shared/models/food.dart';
@@ -75,8 +75,10 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<void> submitState = ref.watch(addFoodControllerProvider);
-    final List<ReferenceItem> categories = ref.watch(categoryListProvider).value ?? <ReferenceItem>[];
-    final List<ReferenceItem> locations = ref.watch(locationListProvider).value ?? <ReferenceItem>[];
+    final List<ReferenceItem> categories =
+        ref.watch(categoryListProvider).value ?? <ReferenceItem>[];
+    final List<ReferenceItem> locations =
+        ref.watch(locationListProvider).value ?? <ReferenceItem>[];
     return PopScope<Object?>(
       canPop: !_dirty,
       onPopInvokedWithResult: (bool didPop, Object? result) {

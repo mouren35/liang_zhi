@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:liangzhi/core/database/default_data.dart';
+import 'package:liangzhi/shared/constants/default_ids.dart';
 import 'package:liangzhi/core/providers/repository_providers.dart';
 import 'package:liangzhi/features/add_food/add_food_page.dart';
 import 'package:liangzhi/shared/models/food.dart';
