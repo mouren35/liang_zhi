@@ -7,7 +7,7 @@ import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/global_error_handler.dart';
 import 'package:liangzhi/core/database/app_database.dart';
 import 'package:liangzhi/core/database/default_data.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:liangzhi/core/settings/settings_service.dart';
 import 'package:timezone/data/latest.dart' as timezone_data;
 
 typedef InitializationTask = Future<void> Function();
@@ -36,7 +36,7 @@ Future<void> _initializeDatabase() async {
 }
 
 Future<void> _initializeSettings() async {
-  await SharedPreferences.getInstance();
+  await SettingsService.initialize();
 }
 
 Future<void> _initializeNotifications() async {
