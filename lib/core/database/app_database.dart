@@ -78,6 +78,15 @@ class Foods extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => <Column<Object>>{id};
+
+  @override
+  List<String> get customConstraints => <String>[
+    "CHECK (image_remote_url IS NULL OR image_remote_url LIKE 'https://%')",
+    "CHECK ((expiry_input_type = 'direct' AND production_date IS NULL "
+        'AND shelf_life_value IS NULL AND shelf_life_unit IS NULL) '
+        "OR (expiry_input_type = 'production_shelf_life' AND production_date IS NOT NULL "
+        'AND shelf_life_value IS NOT NULL AND shelf_life_unit IS NOT NULL))',
+  ];
 }
 
 class BarcodeProductCache extends Table {

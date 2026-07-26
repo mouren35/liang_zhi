@@ -33,6 +33,80 @@ void main() {
     expect(database.schemaVersion, 1);
   });
 
+  test('食品表写入并读取完整字段', () async {
+    await database.into(database.categories).insert(
+      CategoriesCompanion.insert(
+        id: 'category_dairy',
+        name: '乳制品',
+        isSystem: const Value<bool>(true),
+        createdAt: 1,
+        updatedAt: 1,
+      ),
+    );
+    await database.into(database.locations).insert(
+      LocationsCompanion.insert(
+        id: 'location_fridge',
+        name: '冰箱冷藏',
+        isSystem: const Value<bool>(true),
+        createdAt: 1,
+        updatedAt: 1,
+      ),
+    );
+    await database.into(database.foods).insert(
+      FoodsCompanion.insert(
+        id: 'food-1',
+        barcode: const Value<String>('6901234567892'),
+        name: '鲜牛奶',
+        brand: const Value<String>('粮知牧场'),
+        specification: const Value<String>('250ml'),
+        imageLocalPath: const Value<String>('foods/milk.jpg'),
+        imageRemoteUrl: const Value<String>('https://example.com/milk.jpg'),
+        categoryId: const Value<String>('category_dairy'),
+        locationId: const Value<String>('location_fridge'),
+        quantity: 2.5,
+        unit: const Value<String>('盒'),
+        expiryInputType: 'production_shelf_life',
+        productionDate: const Value<String>('2026-07-01'),
+        shelfLifeValue: const Value<int>(30),
+        shelfLifeUnit: const Value<String>('day'),
+        expiryDate: '2026-07-31',
+        reminderDaysBefore: const Value<int>(3),
+        status: 'active',
+        createdAt: 1,
+        updatedAt: 2,
+      ),
+    );
+
+    final Food saved = await database.select(database.foods).getSingle();
+    expect(saved.name, '鲜牛奶');
+    expect(saved.quantity, 2.5);
+    expect(saved.categoryId, 'category_dairy');
+    expect(saved.locationId, 'location_fridge');
+    expect(saved.expiryDate, '2026-07-31');
+    expect(saved.brand, '粮知牧场');
+
+    await database.delete(database.foods).go();
+    expect(await database.select(database.foods).get(), isEmpty);
+  });
+
+  test('食品表拒绝不一致到期字段', () async {
+    final Future<int> insert = database.into(database.foods).insert(
+      FoodsCompanion.insert(
+        id: 'invalid-food',
+        name: '无效食品',
+        quantity: 1,
+        expiryInputType: 'direct',
+        productionDate: const Value<String>('2026-07-01'),
+        expiryDate: '2026-07-31',
+        status: 'active',
+        createdAt: 1,
+        updatedAt: 1,
+      ),
+    );
+
+    await expectLater(insert, throwsA(isA<SqliteException>()));
+  });
+
   test('空迁移入口不会丢失旧数据', () async {
     await database.close();
     final Directory temporaryDirectory = await Directory.systemTemp.createTemp('liangzhi_db_');
