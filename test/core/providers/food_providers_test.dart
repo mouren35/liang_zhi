@@ -65,18 +65,56 @@ void main() {
       throwsA(isA<DatabaseUnavailableException>()),
     );
   });
+
+  test('添加控制器表达提交中、成功、失败并阻止重复提交', () async {
+    final _StreamFoodRepository fake = _StreamFoodRepository();
+    final ProviderContainer container = ProviderContainer(
+      overrides: [foodRepositoryProvider.overrideWithValue(fake)],
+    );
+    addTearDown(() async {
+      container.dispose();
+      await fake.close();
+    });
+    final ProviderSubscription<AsyncValue<void>> subscription = container.listen(
+      addFoodControllerProvider,
+      (AsyncValue<void>? previous, AsyncValue<void> next) {},
+      fireImmediately: true,
+    );
+    addTearDown(subscription.close);
+    await container.read(addFoodControllerProvider.future);
+    final AddFoodController controller = container.read(addFoodControllerProvider.notifier);
+
+    fake.addCompleter = Completer<void>();
+    final Future<bool> first = controller.submit(_food());
+    expect(container.read(addFoodControllerProvider).isLoading, isTrue);
+    expect(await controller.submit(_food()), isFalse);
+    fake.addCompleter?.complete();
+    expect(await first, isTrue);
+    expect(container.read(addFoodControllerProvider).hasValue, isTrue);
+
+    fake.addError = const DataWriteException();
+    expect(await controller.submit(_food()), isFalse);
+    expect(container.read(addFoodControllerProvider).hasError, isTrue);
+  });
 }
 
 final class _StreamFoodRepository implements FoodRepository {
   final StreamController<List<Food>> _controller = StreamController<List<Food>>.broadcast();
   Object? detailError;
+  Object? addError;
+  Completer<void>? addCompleter;
 
   void emit(List<Food> foods) => _controller.add(foods);
 
   Future<void> close() => _controller.close();
 
   @override
-  Future<void> add(Food food) async {}
+  Future<void> add(Food food) async {
+    if (addError case final Object error) {
+      throw error;
+    }
+    await addCompleter?.future;
+  }
 
   @override
   Future<List<Food>> getActiveFoods() async => <Food>[];

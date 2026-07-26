@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liangzhi/core/providers/repository_providers.dart';
 import 'package:liangzhi/shared/models/food.dart';
@@ -12,3 +14,28 @@ final foodDetailProvider = FutureProvider.family<Food, String>(
   name: 'foodDetailProvider',
   retry: (int retryCount, Object error) => null,
 );
+
+final AsyncNotifierProvider<AddFoodController, void> addFoodControllerProvider =
+    AsyncNotifierProvider<AddFoodController, void>(
+      AddFoodController.new,
+      name: 'addFoodControllerProvider',
+      retry: (int retryCount, Object error) => null,
+    );
+
+final class AddFoodController extends AsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
+
+  Future<bool> submit(Food food) async {
+    if (state.isLoading) {
+      return false;
+    }
+    state = const AsyncLoading<void>();
+    state = await AsyncValue.guard<void>(() => ref.read(foodRepositoryProvider).add(food));
+    return !state.hasError;
+  }
+
+  void reset() {
+    state = const AsyncData<void>(null);
+  }
+}
