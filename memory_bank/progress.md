@@ -73,6 +73,15 @@
 - 未解决问题：启动器与 iOS 主屏幕视觉确认分别等待 Android 设备和外部 iOS 环境；
 - 下一步骤：步骤 3，配置应用包标识。
 
+### 步骤 3：配置应用包标识
+
+- 提交：本步骤提交；
+- 修改文件：Android Gradle、MainActivity、iOS Xcode 工程、`memory_bank/progress.md`；
+- 实际验证：全仓搜索旧标识并核对 Android namespace/application ID、iOS App/Test 标识；
+- 结果：应用标识统一为 `com.liangzhi.app`，测试 Target 为 `com.liangzhi.app.RunnerTests`；
+- 未解决问题：iOS 构建验证依赖 macOS CI；
+- 下一步骤：步骤 4，清理默认示例内容。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
