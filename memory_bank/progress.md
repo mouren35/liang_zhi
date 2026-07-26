@@ -136,6 +136,15 @@
 - 未解决问题：远程 GitHub Actions 结果需在推送后由平台执行；
 - 下一步骤：步骤 10，建立应用级目录。
 
+### 步骤 10：建立应用级目录
+
+- 提交：本步骤提交；
+- 修改文件：`lib/app/README.md`、`lib/core/README.md`、`lib/features/README.md`、`lib/shared/README.md`、`memory_bank/progress.md`；
+- 实际验证：检查四个顶层目录及职责说明；
+- 结果：`app/core/features/shared` 结构已建立，没有 `utils/helpers/common` 大杂烩目录；
+- 未解决问题：无；
+- 下一步骤：步骤 11，建立功能模块目录。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
