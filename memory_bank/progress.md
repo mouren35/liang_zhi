@@ -370,6 +370,15 @@
 - 未解决问题：无；
 - 下一步骤：步骤 36，建立 FoodRepository 接口。
 
+### 步骤 36：建立 FoodRepository 接口
+
+- 提交：本步骤提交；
+- 修改文件：`lib/shared/repositories/food_repository.dart`、接口假实现测试与进度文档；
+- 实际验证：以纯 Dart 假实现完成有效列表读取；
+- 结果：接口覆盖列表、监听、按 ID、新增、更新和软删除，上层无需知道 Drift 类型；
+- 未解决问题：无；
+- 下一步骤：步骤 37，实现本地 FoodRepository。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
