@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/core/database/app_database.dart';
+import 'package:liangzhi/core/database/barcode_cache_policy.dart';
 import 'package:liangzhi/core/database/default_data.dart';
 
 void main() {
@@ -236,6 +237,47 @@ void main() {
       '其他',
     );
     expect(categories.every((Category item) => item.isSystem), isTrue);
+  });
+
+  test('每个数据库测试从空业务数据开始', () async {
+    expect(await database.select(database.foods).get(), isEmpty);
+    expect(await database.select(database.barcodeProductCache).get(), isEmpty);
+  });
+
+  test('条码缓存命中 30 天、未命中 24 小时过期', () async {
+    final DateTime fetchedAt = DateTime.utc(2026, 7, 1, 9);
+    final DateTime foundExpiry = BarcodeCachePolicy.expiresAt(
+      lookupStatus: 'found',
+      fetchedAt: fetchedAt,
+    );
+    final DateTime notFoundExpiry = BarcodeCachePolicy.expiresAt(
+      lookupStatus: 'not_found',
+      fetchedAt: fetchedAt,
+    );
+
+    expect(foundExpiry, DateTime.utc(2026, 7, 31, 9));
+    expect(notFoundExpiry, DateTime.utc(2026, 7, 2, 9));
+
+    await database.into(database.barcodeProductCache).insert(
+      BarcodeProductCacheCompanion.insert(
+        barcode: '6901234567892',
+        lookupStatus: 'found',
+        productName: const Value<String>('测试商品'),
+        fetchedAt: fetchedAt.millisecondsSinceEpoch,
+        expiresAt: foundExpiry.millisecondsSinceEpoch,
+      ),
+    );
+    final BarcodeProductCacheData saved = await database
+        .select(database.barcodeProductCache)
+        .getSingle();
+    expect(saved.productName, '测试商品');
+    expect(
+      BarcodeCachePolicy.isExpired(
+        expiresAtUtcMillis: saved.expiresAt,
+        now: foundExpiry,
+      ),
+      isTrue,
+    );
   });
 
   test('空迁移入口不会丢失旧数据', () async {
