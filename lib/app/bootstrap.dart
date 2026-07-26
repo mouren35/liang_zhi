@@ -19,7 +19,7 @@ Future<void> bootstrap({
     await (initializeDatabase ?? _initializeDatabase)();
     await (initializeSettings ?? _initializeSettings)();
     await (initializeNotifications ?? _initializeNotifications)();
-    runApp(const ProviderScope(child: LiangZhiApp()));
+    runApp(ProviderScope(child: LiangZhiApp()));
   } on Object {
     runApp(const _InitializationFailureApp());
   }

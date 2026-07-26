@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/features/home/home_page.dart';
 
 class LiangZhiApp extends StatelessWidget {
-  const LiangZhiApp({super.key});
+  LiangZhiApp({AppConfig? config, super.key}) : config = config ?? AppConfig.current;
+
+  final AppConfig config;
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +13,13 @@ class LiangZhiApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '粮知',
       theme: ThemeData(colorSchemeSeed: const Color(0xFF3F854C)),
-      home: const HomePage(),
+      home: config.showEnvironmentBadge
+          ? Banner(
+              message: config.environment.label,
+              location: BannerLocation.topEnd,
+              child: const HomePage(),
+            )
+          : const HomePage(),
     );
   }
 }
