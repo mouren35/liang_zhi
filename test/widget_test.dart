@@ -13,6 +13,6 @@ void main() {
       ),
     );
 
-    expect(find.text('首页'), findsOneWidget);
+    expect(find.text('首页'), findsWidgets);
   });
 }

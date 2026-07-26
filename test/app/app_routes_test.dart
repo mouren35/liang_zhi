@@ -28,7 +28,28 @@ void main() {
     ]) {
       router.go(path);
       await tester.pumpAndSettle();
-      expect(find.text(label), findsOneWidget, reason: path);
+      expect(find.text(label), findsWidgets, reason: path);
     }
+  });
+
+  testWidgets('底部导航切换分支并保持可见', (WidgetTester tester) async {
+    final GoRouter router = createAppRouter();
+    await tester.pumpWidget(
+      LiangZhiApp(
+        router: router,
+        config: AppConfig(
+          environment: AppEnvironment.production,
+          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('全部食物').last);
+    await tester.pumpAndSettle();
+
+    expect(router.routeInformationProvider.value.uri.path, AppRoutes.foods);
+    expect(find.text('首页'), findsWidgets);
+    expect(find.text('全部食物'), findsWidgets);
+    expect(find.text('我的'), findsWidgets);
   });
 }

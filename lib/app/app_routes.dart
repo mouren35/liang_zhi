@@ -7,6 +7,7 @@ import 'package:liangzhi/features/foods/foods_page.dart';
 import 'package:liangzhi/features/home/home_page.dart';
 import 'package:liangzhi/features/mine/mine_page.dart';
 import 'package:liangzhi/features/scan/scan_page.dart';
+import 'package:liangzhi/app/app_shell.dart';
 
 abstract final class AppRoutes {
   static const String home = '/home';
@@ -24,32 +25,69 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
   return GoRouter(
     initialLocation: initialLocation,
     routes: <RouteBase>[
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (BuildContext context, GoRouterState state) => const HomePage(),
-      ),
-      GoRoute(
-        path: AppRoutes.expirations,
-        name: 'expirations',
-        builder: (BuildContext context, GoRouterState state) => const ExpirationsPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.scan,
-        name: 'scan',
-        builder: (BuildContext context, GoRouterState state) => const ScanPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.foods,
-        name: 'foods',
-        builder: (BuildContext context, GoRouterState state) => const FoodsPage(),
-        routes: <RouteBase>[
-          GoRoute(
-            path: ':foodId',
-            name: 'foodDetail',
-            builder: (BuildContext context, GoRouterState state) {
-              return FoodDetailPage(foodId: state.pathParameters['foodId'] ?? '');
+      StatefulShellRoute.indexedStack(
+        builder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              return AppShell(navigationShell: navigationShell);
             },
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.home,
+                name: 'home',
+                builder: (BuildContext context, GoRouterState state) => const HomePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.expirations,
+                name: 'expirations',
+                builder: (BuildContext context, GoRouterState state) => const ExpirationsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.scan,
+                name: 'scan',
+                builder: (BuildContext context, GoRouterState state) => const ScanPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.foods,
+                name: 'foods',
+                builder: (BuildContext context, GoRouterState state) => const FoodsPage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':foodId',
+                    name: 'foodDetail',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return FoodDetailPage(foodId: state.pathParameters['foodId'] ?? '');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.mine,
+                name: 'mine',
+                builder: (BuildContext context, GoRouterState state) => const MinePage(),
+              ),
+            ],
           ),
         ],
       ),
@@ -57,11 +95,6 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
         path: AppRoutes.addFood,
         name: 'addFood',
         builder: (BuildContext context, GoRouterState state) => const AddFoodPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.mine,
-        name: 'mine',
-        builder: (BuildContext context, GoRouterState state) => const MinePage(),
       ),
     ],
   );
