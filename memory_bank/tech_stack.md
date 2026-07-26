@@ -1,0 +1,1 @@
+Flutter + Riverpod + Drift（SQLite）+ 本地通知
