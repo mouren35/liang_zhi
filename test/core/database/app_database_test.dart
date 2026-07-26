@@ -154,6 +154,50 @@ void main() {
     );
   });
 
+  test('存放位置表按顺序读取并拒绝重复 ID', () async {
+    await database.batch((Batch batch) {
+      batch.insertAll(database.locations, <LocationsCompanion>[
+        LocationsCompanion.insert(
+          id: 'location_cabinet',
+          name: '厨房橱柜',
+          sortOrder: const Value<int>(20),
+          isSystem: const Value<bool>(true),
+          createdAt: 2,
+          updatedAt: 2,
+        ),
+        LocationsCompanion.insert(
+          id: 'location_fridge',
+          name: '冰箱冷藏',
+          sortOrder: const Value<int>(10),
+          isSystem: const Value<bool>(true),
+          createdAt: 1,
+          updatedAt: 1,
+        ),
+      ]);
+    });
+
+    final List<Location> locations = await (database.select(
+      database.locations,
+    )..orderBy(<OrderClauseGenerator<$LocationsTable>>[
+      ($LocationsTable table) => OrderingTerm.asc(table.sortOrder),
+      ($LocationsTable table) => OrderingTerm.asc(table.createdAt),
+    ])).get();
+
+    expect(locations.map((Location item) => item.name), <String>['冰箱冷藏', '厨房橱柜']);
+
+    await expectLater(
+      database.into(database.locations).insert(
+        LocationsCompanion.insert(
+          id: 'location_fridge',
+          name: '重复',
+          createdAt: 3,
+          updatedAt: 3,
+        ),
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+  });
+
   test('空迁移入口不会丢失旧数据', () async {
     await database.close();
     final Directory temporaryDirectory = await Directory.systemTemp.createTemp('liangzhi_db_');
