@@ -39,6 +39,19 @@ void main() {
       }
     }
   });
+
+  test('页面不创建 Repository 或数据库实例', () {
+    final Iterable<File> pages = _dartFiles(libDirectory).where(
+      (File file) => file.path.endsWith('_page.dart'),
+    );
+
+    for (final File page in pages) {
+      final String source = page.readAsStringSync();
+      expect(source, isNot(contains('LocalFoodRepository(')), reason: page.path);
+      expect(source, isNot(contains('AppDatabase(')), reason: page.path);
+      expect(source, isNot(contains('List<Food> _')), reason: page.path);
+    }
+  });
 }
 
 Iterable<File> _dartFiles(Directory directory) sync* {
