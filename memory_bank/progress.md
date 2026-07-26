@@ -127,6 +127,15 @@
 - 未解决问题：当前文件数量不足十个，完整抽样将在功能骨架建立后复核；
 - 下一步骤：步骤 9，建立基础持续检查命令。
 
+### 步骤 9：建立基础持续检查命令
+
+- 提交：本步骤提交；
+- 修改文件：`.github/workflows/ci.yml`、`README.md`、`memory_bank/progress.md`；
+- 实际验证：检查 Linux/macOS Job、固定 Flutter 版本、无签名 iOS 构建和本地命令说明；
+- 结果：CI 覆盖格式、分析、测试、Android 构建和 iOS 无签名构建；
+- 未解决问题：远程 GitHub Actions 结果需在推送后由平台执行；
+- 下一步骤：步骤 10，建立应用级目录。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；

@@ -36,6 +36,9 @@ flutter test
 flutter run --dart-define=APP_ENV=development
 ```
 
+每次提交前必须依次执行依赖获取、格式检查、静态分析和全部自动化测试。Linux CI 还会构建
+Android 调试 APK，macOS CI 会执行 iOS 无签名构建。
+
 Open Food Facts 基地址可通过
 `--dart-define=OPEN_FOOD_FACTS_BASE_URL=https://world.openfoodfacts.org` 覆盖。
 
