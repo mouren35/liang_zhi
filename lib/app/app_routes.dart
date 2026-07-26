@@ -11,6 +11,7 @@ import 'package:liangzhi/app/app_shell.dart';
 import 'package:liangzhi/app/route_error_page.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/core/errors/app_exception.dart';
+import 'package:liangzhi/shared/models/food.dart';
 
 abstract final class AppRoutes {
   static const String home = '/home';
@@ -134,7 +135,16 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
       GoRoute(
         path: AppRoutes.addFood,
         name: 'addFood',
-        builder: (BuildContext context, GoRouterState state) => const AddFoodPage(),
+        builder: (BuildContext context, GoRouterState state) => AddFoodPage(
+          initialBarcode: state.uri.queryParameters['barcode'],
+          onSaved: (Food food) {
+            context.go(AppRoutes.foods);
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('食品已添加')));
+          },
+          onCancel: () => context.pop(),
+        ),
       ),
     ],
   );

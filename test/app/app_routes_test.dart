@@ -26,7 +26,7 @@ void main() {
       (AppRoutes.expirations, '到期提醒'),
       (AppRoutes.scan, '扫码添加'),
       (AppRoutes.foods, '全部食物'),
-      (AppRoutes.addFood, '手动添加食物'),
+      (AppRoutes.addFood, '添加食物'),
       (AppRoutes.foodDetail('food-1'), '食品不存在或已经删除'),
       (AppRoutes.mine, '我的'),
     ]) {
