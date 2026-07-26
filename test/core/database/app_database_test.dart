@@ -107,6 +107,53 @@ void main() {
     await expectLater(insert, throwsA(isA<SqliteException>()));
   });
 
+  test('分类表保存系统与用户分类并按顺序读取', () async {
+    await database.batch((Batch batch) {
+      batch.insertAll(database.categories, <CategoriesCompanion>[
+        CategoriesCompanion.insert(
+          id: 'category_user',
+          name: '自定义',
+          sortOrder: const Value<int>(20),
+          createdAt: 2,
+          updatedAt: 2,
+        ),
+        CategoriesCompanion.insert(
+          id: 'category_system',
+          name: '系统分类',
+          sortOrder: const Value<int>(10),
+          isSystem: const Value<bool>(true),
+          createdAt: 1,
+          updatedAt: 1,
+        ),
+      ]);
+    });
+
+    final List<Category> categories = await (database.select(
+      database.categories,
+    )..orderBy(<OrderClauseGenerator<$CategoriesTable>>[
+      ($CategoriesTable table) => OrderingTerm.asc(table.sortOrder),
+      ($CategoriesTable table) => OrderingTerm.asc(table.createdAt),
+    ])).get();
+
+    expect(categories.map((Category item) => item.id), <String>[
+      'category_system',
+      'category_user',
+    ]);
+    expect(categories.first.isSystem, isTrue);
+
+    await expectLater(
+      database.into(database.categories).insert(
+        CategoriesCompanion.insert(
+          id: 'category_system',
+          name: '重复',
+          createdAt: 3,
+          updatedAt: 3,
+        ),
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+  });
+
   test('空迁移入口不会丢失旧数据', () async {
     await database.close();
     final Directory temporaryDirectory = await Directory.systemTemp.createTemp('liangzhi_db_');
