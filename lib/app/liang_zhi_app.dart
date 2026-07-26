@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:liangzhi/app/app_config.dart';
+import 'package:liangzhi/app/app_theme.dart';
 import 'package:liangzhi/features/home/home_page.dart';
-import 'package:liangzhi/shared/design/app_colors.dart';
-import 'package:liangzhi/shared/design/app_typography.dart';
 
 class LiangZhiApp extends StatelessWidget {
   LiangZhiApp({AppConfig? config, super.key}) : config = config ?? AppConfig.current;
@@ -15,10 +14,7 @@ class LiangZhiApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '粮知',
-      theme: ThemeData(
-        colorSchemeSeed: AppColors.accent,
-        textTheme: AppTypography.textTheme(defaultTargetPlatform),
-      ),
+      theme: AppTheme.light(defaultTargetPlatform),
       home: config.showEnvironmentBadge
           ? Banner(
               message: config.environment.label,
