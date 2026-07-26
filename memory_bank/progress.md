@@ -406,6 +406,15 @@
 - 未解决问题：无；
 - 下一步骤：步骤 40，注册基础 Provider。
 
+### 步骤 40：注册基础 Provider
+
+- 提交：本步骤提交；
+- 修改文件：Repository Provider、替换测试与进度文档；
+- 实际验证：在独立 ProviderContainer 中用假实现覆盖 FoodRepository；
+- 结果：数据库、食品、分类和位置 Provider 集中注册，页面无需直接创建实现；
+- 未解决问题：无；
+- 下一步骤：步骤 41，建立食品列表 Provider。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
