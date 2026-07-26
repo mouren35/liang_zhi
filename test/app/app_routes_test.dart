@@ -6,11 +6,13 @@ import 'package:liangzhi/app/app_routes.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
 import 'package:liangzhi/features/foods/foods_page.dart';
 
+import '../support/test_scope.dart';
+
 void main() {
   testWidgets('集中定义的所有页面路由均可直接打开', (WidgetTester tester) async {
     final GoRouter router = createAppRouter();
     await tester.pumpWidget(
-      LiangZhiApp(
+      _testApp(
         router: router,
         config: AppConfig(
           environment: AppEnvironment.production,
@@ -37,7 +39,7 @@ void main() {
   testWidgets('底部导航切换分支并保持可见', (WidgetTester tester) async {
     final GoRouter router = createAppRouter();
     await tester.pumpWidget(
-      LiangZhiApp(
+      _testApp(
         router: router,
         config: AppConfig(
           environment: AppEnvironment.production,
@@ -58,7 +60,7 @@ void main() {
   testWidgets('一级分支切换时保留原页面元素', (WidgetTester tester) async {
     final GoRouter router = createAppRouter(initialLocation: AppRoutes.foods);
     await tester.pumpWidget(
-      LiangZhiApp(
+      _testApp(
         router: router,
         config: AppConfig(
           environment: AppEnvironment.production,
@@ -79,7 +81,7 @@ void main() {
   testWidgets('详情返回恢复全部食物分支与原页面', (WidgetTester tester) async {
     final GoRouter router = createAppRouter(initialLocation: AppRoutes.foods);
     await tester.pumpWidget(
-      LiangZhiApp(
+      _testApp(
         router: router,
         config: AppConfig(
           environment: AppEnvironment.production,
@@ -102,7 +104,7 @@ void main() {
   testWidgets('未知路径和非法食品参数显示错误页并可返回首页', (WidgetTester tester) async {
     final GoRouter router = createAppRouter(initialLocation: '/missing');
     await tester.pumpWidget(
-      LiangZhiApp(
+      _testApp(
         router: router,
         config: AppConfig(
           environment: AppEnvironment.production,
@@ -120,4 +122,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.routeInformationProvider.value.uri.path, AppRoutes.home);
   });
+}
+
+Widget _testApp({required GoRouter router, required AppConfig config}) {
+  return withTestScope(LiangZhiApp(router: router, config: config));
 }

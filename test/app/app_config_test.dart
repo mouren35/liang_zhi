@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
 
+import '../support/test_scope.dart';
+
 void main() {
   group('AppConfig', () {
     test('解析三种受支持环境', () {
@@ -23,10 +25,12 @@ void main() {
 
     testWidgets('开发环境显示标识而正式环境不显示', (WidgetTester tester) async {
       await tester.pumpWidget(
-        LiangZhiApp(
-          config: AppConfig(
-            environment: AppEnvironment.development,
-            openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        withTestScope(
+          LiangZhiApp(
+            config: AppConfig(
+              environment: AppEnvironment.development,
+              openFoodFactsBaseUri: Uri.parse('https://example.com'),
+            ),
           ),
         ),
       );
@@ -34,10 +38,12 @@ void main() {
       expect(banner.message, '开发环境');
 
       await tester.pumpWidget(
-        LiangZhiApp(
-          config: AppConfig(
-            environment: AppEnvironment.production,
-            openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        withTestScope(
+          LiangZhiApp(
+            config: AppConfig(
+              environment: AppEnvironment.production,
+              openFoodFactsBaseUri: Uri.parse('https://example.com'),
+            ),
           ),
         ),
       );
