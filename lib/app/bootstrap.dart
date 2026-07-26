@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
+import 'package:liangzhi/app/app_config.dart';
+import 'package:liangzhi/app/global_error_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as timezone_data;
 
@@ -14,6 +16,7 @@ Future<void> bootstrap({
   InitializationTask? initializeNotifications,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+  installGlobalErrorHandlers(AppConfig.current);
 
   try {
     await (initializeDatabase ?? _initializeDatabase)();
