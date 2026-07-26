@@ -98,4 +98,26 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, AppRoutes.foods);
     expect(find.byType(FoodsPage).evaluate().single, same(originalFoodsElement));
   });
+
+  testWidgets('未知路径和非法食品参数显示错误页并可返回首页', (WidgetTester tester) async {
+    final GoRouter router = createAppRouter(initialLocation: '/missing');
+    await tester.pumpWidget(
+      LiangZhiApp(
+        router: router,
+        config: AppConfig(
+          environment: AppEnvironment.production,
+          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        ),
+      ),
+    );
+    expect(find.text('没有找到这个页面'), findsOneWidget);
+
+    router.go('/foods/%20');
+    await tester.pumpAndSettle();
+    expect(find.text('食品链接无效'), findsOneWidget);
+
+    await tester.tap(find.text('返回首页'));
+    await tester.pumpAndSettle();
+    expect(router.routeInformationProvider.value.uri.path, AppRoutes.home);
+  });
 }

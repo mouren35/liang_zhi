@@ -8,6 +8,7 @@ import 'package:liangzhi/features/home/home_page.dart';
 import 'package:liangzhi/features/mine/mine_page.dart';
 import 'package:liangzhi/features/scan/scan_page.dart';
 import 'package:liangzhi/app/app_shell.dart';
+import 'package:liangzhi/app/route_error_page.dart';
 
 abstract final class AppRoutes {
   static const String home = '/home';
@@ -24,6 +25,9 @@ abstract final class AppRoutes {
 GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
   return GoRouter(
     initialLocation: initialLocation,
+    errorBuilder: (BuildContext context, GoRouterState state) {
+      return RouteErrorPage(onReturnHome: () => context.go(AppRoutes.home));
+    },
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         builder:
@@ -73,7 +77,14 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
                     path: ':foodId',
                     name: 'foodDetail',
                     builder: (BuildContext context, GoRouterState state) {
-                      return FoodDetailPage(foodId: state.pathParameters['foodId'] ?? '');
+                      final String foodId = state.pathParameters['foodId'] ?? '';
+                      if (!RegExp(r'^[A-Za-z0-9_-]{1,100}$').hasMatch(foodId)) {
+                        return RouteErrorPage(
+                          message: '食品链接无效',
+                          onReturnHome: () => context.go(AppRoutes.home),
+                        );
+                      }
+                      return FoodDetailPage(foodId: foodId);
                     },
                   ),
                 ],
