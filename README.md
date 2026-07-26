@@ -25,6 +25,7 @@ iOS，包含手动录入、一维条形码扫码、Open Food Facts 只读查询�
 - 通用组件使用 `_widget.dart` 后缀，业务组件使用明确业务名称；
 - Drift 表、SQLite 字段和领域模型保持同一业务词汇，数据库字段使用 `snake_case`；
 - 测试文件镜像源文件路径并使用 `_test.dart` 后缀。
+- 功能图标统一从 `AppIcons` 取 Material 线性图标，不用 Emoji 或第三方图标集。
 
 ## 本地开发
 
