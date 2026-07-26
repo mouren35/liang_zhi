@@ -44,6 +44,19 @@ void main() {
   test('不存在食品返回统一异常', () async {
     await expectLater(repository.getById('missing'), throwsA(isA<DataNotFoundException>()));
   });
+
+  test('底层写入失败转换为不含 SQL 的统一异常', () async {
+    await repository.add(_food());
+
+    try {
+      await repository.add(_food());
+      fail('重复 ID 应写入失败');
+    } on DataWriteException catch (error) {
+      expect(error.message, '保存失败，请稍后重试');
+      expect(error.toString(), isNot(contains('UNIQUE')));
+      expect(error.toString(), isNot(contains('INSERT')));
+    }
+  });
 }
 
 Food _food() {
