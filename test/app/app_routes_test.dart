@@ -1,8 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/app_routes.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
+import 'package:liangzhi/features/foods/foods_page.dart';
 
 void main() {
   testWidgets('集中定义的所有页面路由均可直接打开', (WidgetTester tester) async {
@@ -51,5 +53,26 @@ void main() {
     expect(find.text('首页'), findsWidgets);
     expect(find.text('全部食物'), findsWidgets);
     expect(find.text('我的'), findsWidgets);
+  });
+
+  testWidgets('一级分支切换时保留原页面元素', (WidgetTester tester) async {
+    final GoRouter router = createAppRouter(initialLocation: AppRoutes.foods);
+    await tester.pumpWidget(
+      LiangZhiApp(
+        router: router,
+        config: AppConfig(
+          environment: AppEnvironment.production,
+          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        ),
+      ),
+    );
+    final Element originalFoodsElement = find.byType(FoodsPage).evaluate().single;
+
+    router.go(AppRoutes.home);
+    await tester.pumpAndSettle();
+    router.go(AppRoutes.foods);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FoodsPage).evaluate().single, same(originalFoodsElement));
   });
 }
