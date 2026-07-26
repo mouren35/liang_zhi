@@ -42,5 +42,6 @@ MinePage _page({required Future<void> Function() onClearData}) {
     ),
     onOpenNotificationSettings: () {},
     onClearData: onClearData,
+    onCleared: () {},
   );
 }

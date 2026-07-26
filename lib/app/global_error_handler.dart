@@ -3,28 +3,25 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:liangzhi/app/app_config.dart';
+import 'package:liangzhi/core/logging/safe_logger.dart';
 
-void installGlobalErrorHandlers(AppConfig config) {
+void installGlobalErrorHandlers(AppConfig config, {SafeLogger? logger}) {
+  final SafeLogger safeLogger =
+      logger ?? SafeLogger(enabled: config.environment != AppEnvironment.production);
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return GlobalErrorWidget(
       technicalMessage: config.environment == AppEnvironment.production
           ? null
-          : details.exceptionAsString(),
+          : details.exception.runtimeType.toString(),
     );
   };
 
   FlutterError.onError = (FlutterErrorDetails details) {
-    if (config.environment != AppEnvironment.production) {
-      FlutterError.presentError(details);
-    }
+    safeLogger.error('flutter_error', details.exception);
   };
 
   PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    if (config.environment != AppEnvironment.production) {
-      FlutterError.presentError(
-        FlutterErrorDetails(exception: error, stack: stack, library: 'uncaught asynchronous error'),
-      );
-    }
+    safeLogger.error('uncaught_async_error', error);
     return true;
   };
 }

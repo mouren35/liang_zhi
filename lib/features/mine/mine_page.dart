@@ -11,12 +11,14 @@ class MinePage extends StatelessWidget {
     required this.config,
     required this.onOpenNotificationSettings,
     required this.onClearData,
+    required this.onCleared,
     super.key,
   });
 
   final AppConfig config;
   final VoidCallback onOpenNotificationSettings;
   final Future<void> Function() onClearData;
+  final VoidCallback onCleared;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +111,7 @@ class MinePage extends StatelessWidget {
       await onClearData();
       if (context.mounted) {
         showSuccessMessage(context, '本地数据已清除');
+        onCleared();
       }
     } on Object {
       if (context.mounted) {

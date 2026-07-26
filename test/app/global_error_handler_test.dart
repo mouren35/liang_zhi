@@ -21,7 +21,7 @@ void main() {
     expect(find.textContaining('sensitive'), findsNothing);
   });
 
-  testWidgets('开发环境错误组件显示明确异常', (WidgetTester tester) async {
+  testWidgets('开发环境错误组件只显示异常类型', (WidgetTester tester) async {
     installGlobalErrorHandlers(
       AppConfig(
         environment: AppEnvironment.development,
@@ -34,6 +34,7 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(home: errorWidget));
 
-    expect(find.textContaining('build failed'), findsOneWidget);
+    expect(find.textContaining('StateError'), findsOneWidget);
+    expect(find.textContaining('build failed'), findsNothing);
   });
 }

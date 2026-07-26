@@ -25,7 +25,8 @@ abstract final class SettingsKeys {
 }
 
 enum FoodListViewMode {
-  list('list');
+  list('list')
+  ;
 
   const FoodListViewMode(this.storageValue);
 
@@ -98,13 +99,11 @@ final class SettingsService {
       ),
       remindExpired: _preferences.getBool(SettingsKeys.remindExpired) ?? true,
       dailySummaryEnabled: _preferences.getBool(SettingsKeys.dailySummaryEnabled) ?? true,
-      longTermReminderEnabled:
-          _preferences.getBool(SettingsKeys.longTermReminderEnabled) ?? true,
-      longTermReminderDays:
-          _positiveOrDefault(
-            _preferences.getInt(SettingsKeys.longTermReminderDays),
-            fallback: 30,
-          ),
+      longTermReminderEnabled: _preferences.getBool(SettingsKeys.longTermReminderEnabled) ?? true,
+      longTermReminderDays: _positiveOrDefault(
+        _preferences.getInt(SettingsKeys.longTermReminderDays),
+        fallback: 30,
+      ),
     );
   }
 

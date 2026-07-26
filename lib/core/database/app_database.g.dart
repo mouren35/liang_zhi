@@ -3,8 +3,7 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $CategoriesTable extends Categories
-    with TableInfo<$CategoriesTable, Category> {
+class $CategoriesTable extends Categories with TableInfo<$CategoriesTable, Category> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -246,9 +245,7 @@ class Category extends DataClass implements Insertable<Category> {
       isSystem: Value(isSystem),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
     );
   }
 
@@ -469,8 +466,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   }
 }
 
-class $LocationsTable extends Locations
-    with TableInfo<$LocationsTable, Location> {
+class $LocationsTable extends Locations with TableInfo<$LocationsTable, Location> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -712,9 +708,7 @@ class Location extends DataClass implements Insertable<Location> {
       isSystem: Value(isSystem),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
     );
   }
 
@@ -1141,8 +1135,9 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _reminderDaysBeforeMeta =
-      const VerificationMeta('reminderDaysBefore');
+  static const VerificationMeta _reminderDaysBeforeMeta = const VerificationMeta(
+    'reminderDaysBefore',
+  );
   @override
   late final GeneratedColumn<int> reminderDaysBefore = GeneratedColumn<int>(
     'reminder_days_before',
@@ -1599,13 +1594,9 @@ class Food extends DataClass implements Insertable<Food> {
   FoodsCompanion toCompanion(bool nullToAbsent) {
     return FoodsCompanion(
       id: Value(id),
-      barcode: barcode == null && nullToAbsent
-          ? const Value.absent()
-          : Value(barcode),
+      barcode: barcode == null && nullToAbsent ? const Value.absent() : Value(barcode),
       name: Value(name),
-      brand: brand == null && nullToAbsent
-          ? const Value.absent()
-          : Value(brand),
+      brand: brand == null && nullToAbsent ? const Value.absent() : Value(brand),
       specification: specification == null && nullToAbsent
           ? const Value.absent()
           : Value(specification),
@@ -1615,12 +1606,8 @@ class Food extends DataClass implements Insertable<Food> {
       imageRemoteUrl: imageRemoteUrl == null && nullToAbsent
           ? const Value.absent()
           : Value(imageRemoteUrl),
-      categoryId: categoryId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(categoryId),
-      locationId: locationId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(locationId),
+      categoryId: categoryId == null && nullToAbsent ? const Value.absent() : Value(categoryId),
+      locationId: locationId == null && nullToAbsent ? const Value.absent() : Value(locationId),
       quantity: Value(quantity),
       unit: Value(unit),
       expiryInputType: Value(expiryInputType),
@@ -1640,9 +1627,7 @@ class Food extends DataClass implements Insertable<Food> {
       status: Value(status),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
     );
   }
 
@@ -1730,29 +1715,17 @@ class Food extends DataClass implements Insertable<Food> {
     barcode: barcode.present ? barcode.value : this.barcode,
     name: name ?? this.name,
     brand: brand.present ? brand.value : this.brand,
-    specification: specification.present
-        ? specification.value
-        : this.specification,
-    imageLocalPath: imageLocalPath.present
-        ? imageLocalPath.value
-        : this.imageLocalPath,
-    imageRemoteUrl: imageRemoteUrl.present
-        ? imageRemoteUrl.value
-        : this.imageRemoteUrl,
+    specification: specification.present ? specification.value : this.specification,
+    imageLocalPath: imageLocalPath.present ? imageLocalPath.value : this.imageLocalPath,
+    imageRemoteUrl: imageRemoteUrl.present ? imageRemoteUrl.value : this.imageRemoteUrl,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
     locationId: locationId.present ? locationId.value : this.locationId,
     quantity: quantity ?? this.quantity,
     unit: unit ?? this.unit,
     expiryInputType: expiryInputType ?? this.expiryInputType,
-    productionDate: productionDate.present
-        ? productionDate.value
-        : this.productionDate,
-    shelfLifeValue: shelfLifeValue.present
-        ? shelfLifeValue.value
-        : this.shelfLifeValue,
-    shelfLifeUnit: shelfLifeUnit.present
-        ? shelfLifeUnit.value
-        : this.shelfLifeUnit,
+    productionDate: productionDate.present ? productionDate.value : this.productionDate,
+    shelfLifeValue: shelfLifeValue.present ? shelfLifeValue.value : this.shelfLifeValue,
+    shelfLifeUnit: shelfLifeUnit.present ? shelfLifeUnit.value : this.shelfLifeUnit,
     expiryDate: expiryDate ?? this.expiryDate,
     reminderDaysBefore: reminderDaysBefore.present
         ? reminderDaysBefore.value
@@ -1768,38 +1741,20 @@ class Food extends DataClass implements Insertable<Food> {
       barcode: data.barcode.present ? data.barcode.value : this.barcode,
       name: data.name.present ? data.name.value : this.name,
       brand: data.brand.present ? data.brand.value : this.brand,
-      specification: data.specification.present
-          ? data.specification.value
-          : this.specification,
-      imageLocalPath: data.imageLocalPath.present
-          ? data.imageLocalPath.value
-          : this.imageLocalPath,
-      imageRemoteUrl: data.imageRemoteUrl.present
-          ? data.imageRemoteUrl.value
-          : this.imageRemoteUrl,
-      categoryId: data.categoryId.present
-          ? data.categoryId.value
-          : this.categoryId,
-      locationId: data.locationId.present
-          ? data.locationId.value
-          : this.locationId,
+      specification: data.specification.present ? data.specification.value : this.specification,
+      imageLocalPath: data.imageLocalPath.present ? data.imageLocalPath.value : this.imageLocalPath,
+      imageRemoteUrl: data.imageRemoteUrl.present ? data.imageRemoteUrl.value : this.imageRemoteUrl,
+      categoryId: data.categoryId.present ? data.categoryId.value : this.categoryId,
+      locationId: data.locationId.present ? data.locationId.value : this.locationId,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
       unit: data.unit.present ? data.unit.value : this.unit,
       expiryInputType: data.expiryInputType.present
           ? data.expiryInputType.value
           : this.expiryInputType,
-      productionDate: data.productionDate.present
-          ? data.productionDate.value
-          : this.productionDate,
-      shelfLifeValue: data.shelfLifeValue.present
-          ? data.shelfLifeValue.value
-          : this.shelfLifeValue,
-      shelfLifeUnit: data.shelfLifeUnit.present
-          ? data.shelfLifeUnit.value
-          : this.shelfLifeUnit,
-      expiryDate: data.expiryDate.present
-          ? data.expiryDate.value
-          : this.expiryDate,
+      productionDate: data.productionDate.present ? data.productionDate.value : this.productionDate,
+      shelfLifeValue: data.shelfLifeValue.present ? data.shelfLifeValue.value : this.shelfLifeValue,
+      shelfLifeUnit: data.shelfLifeUnit.present ? data.shelfLifeUnit.value : this.shelfLifeUnit,
+      expiryDate: data.expiryDate.present ? data.expiryDate.value : this.expiryDate,
       reminderDaysBefore: data.reminderDaysBefore.present
           ? data.reminderDaysBefore.value
           : this.reminderDaysBefore,
@@ -2008,8 +1963,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
       if (shelfLifeValue != null) 'shelf_life_value': shelfLifeValue,
       if (shelfLifeUnit != null) 'shelf_life_unit': shelfLifeUnit,
       if (expiryDate != null) 'expiry_date': expiryDate,
-      if (reminderDaysBefore != null)
-        'reminder_days_before': reminderDaysBefore,
+      if (reminderDaysBefore != null) 'reminder_days_before': reminderDaysBefore,
       if (status != null) 'status': status,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -2195,8 +2149,7 @@ class $BarcodeProductCacheTable extends BarcodeProductCache
     'lookup_status',
     aliasedName,
     false,
-    check: () =>
-        const CustomExpression<bool>("lookup_status IN ('found', 'not_found')"),
+    check: () => const CustomExpression<bool>("lookup_status IN ('found', 'not_found')"),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -2451,8 +2404,7 @@ class $BarcodeProductCacheTable extends BarcodeProductCache
   }
 }
 
-class BarcodeProductCacheData extends DataClass
-    implements Insertable<BarcodeProductCacheData> {
+class BarcodeProductCacheData extends DataClass implements Insertable<BarcodeProductCacheData> {
   final String barcode;
   final String lookupStatus;
   final String? productName;
@@ -2505,18 +2457,12 @@ class BarcodeProductCacheData extends DataClass
     return BarcodeProductCacheCompanion(
       barcode: Value(barcode),
       lookupStatus: Value(lookupStatus),
-      productName: productName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(productName),
-      brand: brand == null && nullToAbsent
-          ? const Value.absent()
-          : Value(brand),
+      productName: productName == null && nullToAbsent ? const Value.absent() : Value(productName),
+      brand: brand == null && nullToAbsent ? const Value.absent() : Value(brand),
       quantityText: quantityText == null && nullToAbsent
           ? const Value.absent()
           : Value(quantityText),
-      imageUrl: imageUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imageUrl),
+      imageUrl: imageUrl == null && nullToAbsent ? const Value.absent() : Value(imageUrl),
       categoryTagsJson: categoryTagsJson == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryTagsJson),
@@ -2579,9 +2525,7 @@ class BarcodeProductCacheData extends DataClass
     brand: brand.present ? brand.value : this.brand,
     quantityText: quantityText.present ? quantityText.value : this.quantityText,
     imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
-    categoryTagsJson: categoryTagsJson.present
-        ? categoryTagsJson.value
-        : this.categoryTagsJson,
+    categoryTagsJson: categoryTagsJson.present ? categoryTagsJson.value : this.categoryTagsJson,
     source: source ?? this.source,
     fetchedAt: fetchedAt ?? this.fetchedAt,
     expiresAt: expiresAt ?? this.expiresAt,
@@ -2589,16 +2533,10 @@ class BarcodeProductCacheData extends DataClass
   BarcodeProductCacheData copyWithCompanion(BarcodeProductCacheCompanion data) {
     return BarcodeProductCacheData(
       barcode: data.barcode.present ? data.barcode.value : this.barcode,
-      lookupStatus: data.lookupStatus.present
-          ? data.lookupStatus.value
-          : this.lookupStatus,
-      productName: data.productName.present
-          ? data.productName.value
-          : this.productName,
+      lookupStatus: data.lookupStatus.present ? data.lookupStatus.value : this.lookupStatus,
+      productName: data.productName.present ? data.productName.value : this.productName,
       brand: data.brand.present ? data.brand.value : this.brand,
-      quantityText: data.quantityText.present
-          ? data.quantityText.value
-          : this.quantityText,
+      quantityText: data.quantityText.present ? data.quantityText.value : this.quantityText,
       imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
       categoryTagsJson: data.categoryTagsJson.present
           ? data.categoryTagsJson.value
@@ -2655,8 +2593,7 @@ class BarcodeProductCacheData extends DataClass
           other.expiresAt == this.expiresAt);
 }
 
-class BarcodeProductCacheCompanion
-    extends UpdateCompanion<BarcodeProductCacheData> {
+class BarcodeProductCacheCompanion extends UpdateCompanion<BarcodeProductCacheData> {
   final Value<String> barcode;
   final Value<String> lookupStatus;
   final Value<String?> productName;
@@ -2817,8 +2754,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $LocationsTable locations = $LocationsTable(this);
   late final $FoodsTable foods = $FoodsTable(this);
-  late final $BarcodeProductCacheTable barcodeProductCache =
-      $BarcodeProductCacheTable(this);
+  late final $BarcodeProductCacheTable barcodeProductCache = $BarcodeProductCacheTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2895,8 +2831,7 @@ final class $$CategoriesTableReferences
   }
 }
 
-class $$CategoriesTableFilterComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
+class $$CategoriesTableFilterComposer extends Composer<_$AppDatabase, $CategoriesTable> {
   $$CategoriesTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2957,16 +2892,14 @@ class $$CategoriesTableFilterComposer
             $table: $db.foods,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return f(composer);
   }
 }
 
-class $$CategoriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
+class $$CategoriesTableOrderingComposer extends Composer<_$AppDatabase, $CategoriesTable> {
   $$CategoriesTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3010,8 +2943,7 @@ class $$CategoriesTableOrderingComposer
   );
 }
 
-class $$CategoriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
+class $$CategoriesTableAnnotationComposer extends Composer<_$AppDatabase, $CategoriesTable> {
   $$CategoriesTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3058,8 +2990,7 @@ class $$CategoriesTableAnnotationComposer
             $table: $db.foods,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return f(composer);
@@ -3086,10 +3017,8 @@ class $$CategoriesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$CategoriesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$CategoriesTableOrderingComposer($db: db, $table: table),
+          createFilteringComposer: () => $$CategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$CategoriesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$CategoriesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
@@ -3150,8 +3079,7 @@ class $$CategoriesTableTableManager
                   if (foodsRefs)
                     await $_getPrefetchedData<Category, $CategoriesTable, Food>(
                       currentTable: table,
-                      referencedTable: $$CategoriesTableReferences
-                          ._foodsRefsTable(db),
+                      referencedTable: $$CategoriesTableReferences._foodsRefsTable(db),
                       managerFromTypedResult: (p0) =>
                           $$CategoriesTableReferences(db, table, p0).foodsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
@@ -3227,8 +3155,7 @@ final class $$LocationsTableReferences
   }
 }
 
-class $$LocationsTableFilterComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
+class $$LocationsTableFilterComposer extends Composer<_$AppDatabase, $LocationsTable> {
   $$LocationsTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3289,16 +3216,14 @@ class $$LocationsTableFilterComposer
             $table: $db.foods,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return f(composer);
   }
 }
 
-class $$LocationsTableOrderingComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
+class $$LocationsTableOrderingComposer extends Composer<_$AppDatabase, $LocationsTable> {
   $$LocationsTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3342,8 +3267,7 @@ class $$LocationsTableOrderingComposer
   );
 }
 
-class $$LocationsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
+class $$LocationsTableAnnotationComposer extends Composer<_$AppDatabase, $LocationsTable> {
   $$LocationsTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3390,8 +3314,7 @@ class $$LocationsTableAnnotationComposer
             $table: $db.foods,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return f(composer);
@@ -3418,10 +3341,8 @@ class $$LocationsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$LocationsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$LocationsTableOrderingComposer($db: db, $table: table),
+          createFilteringComposer: () => $$LocationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$LocationsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$LocationsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
@@ -3482,8 +3403,7 @@ class $$LocationsTableTableManager
                   if (foodsRefs)
                     await $_getPrefetchedData<Location, $LocationsTable, Food>(
                       currentTable: table,
-                      referencedTable: $$LocationsTableReferences
-                          ._foodsRefsTable(db),
+                      referencedTable: $$LocationsTableReferences._foodsRefsTable(db),
                       managerFromTypedResult: (p0) =>
                           $$LocationsTableReferences(db, table, p0).foodsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
@@ -3563,8 +3483,7 @@ typedef $$FoodsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$FoodsTableReferences
-    extends BaseReferences<_$AppDatabase, $FoodsTable, Food> {
+final class $$FoodsTableReferences extends BaseReferences<_$AppDatabase, $FoodsTable, Food> {
   $$FoodsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $CategoriesTable _categoryIdTable(_$AppDatabase db) =>
@@ -3721,8 +3640,7 @@ class $$FoodsTableFilterComposer extends Composer<_$AppDatabase, $FoodsTable> {
             $table: $db.categories,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
@@ -3744,16 +3662,14 @@ class $$FoodsTableFilterComposer extends Composer<_$AppDatabase, $FoodsTable> {
             $table: $db.locations,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
   }
 }
 
-class $$FoodsTableOrderingComposer
-    extends Composer<_$AppDatabase, $FoodsTable> {
+class $$FoodsTableOrderingComposer extends Composer<_$AppDatabase, $FoodsTable> {
   $$FoodsTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3872,8 +3788,7 @@ class $$FoodsTableOrderingComposer
             $table: $db.categories,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
@@ -3895,16 +3810,14 @@ class $$FoodsTableOrderingComposer
             $table: $db.locations,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
   }
 }
 
-class $$FoodsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $FoodsTable> {
+class $$FoodsTableAnnotationComposer extends Composer<_$AppDatabase, $FoodsTable> {
   $$FoodsTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -4003,8 +3916,7 @@ class $$FoodsTableAnnotationComposer
             $table: $db.categories,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
@@ -4026,8 +3938,7 @@ class $$FoodsTableAnnotationComposer
             $table: $db.locations,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
+            $removeJoinBuilderFromRootComposer: $removeJoinBuilderFromRootComposer,
           ),
     );
     return composer;
@@ -4054,12 +3965,9 @@ class $$FoodsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$FoodsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$FoodsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$FoodsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () => $$FoodsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$FoodsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$FoodsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
@@ -4158,8 +4066,7 @@ class $$FoodsTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$FoodsTableReferences(db, table, e)),
+                (e) => (e.readTable(table), $$FoodsTableReferences(db, table, e)),
               )
               .toList(),
           prefetchHooksCallback: ({categoryId = false, locationId = false}) {
@@ -4187,11 +4094,8 @@ class $$FoodsTableTableManager
                           state.withJoin(
                                 currentTable: table,
                                 currentColumn: table.categoryId,
-                                referencedTable: $$FoodsTableReferences
-                                    ._categoryIdTable(db),
-                                referencedColumn: $$FoodsTableReferences
-                                    ._categoryIdTable(db)
-                                    .id,
+                                referencedTable: $$FoodsTableReferences._categoryIdTable(db),
+                                referencedColumn: $$FoodsTableReferences._categoryIdTable(db).id,
                               )
                               as T;
                     }
@@ -4200,11 +4104,8 @@ class $$FoodsTableTableManager
                           state.withJoin(
                                 currentTable: table,
                                 currentColumn: table.locationId,
-                                referencedTable: $$FoodsTableReferences
-                                    ._locationIdTable(db),
-                                referencedColumn: $$FoodsTableReferences
-                                    ._locationIdTable(db)
-                                    .id,
+                                referencedTable: $$FoodsTableReferences._locationIdTable(db),
+                                referencedColumn: $$FoodsTableReferences._locationIdTable(db).id,
                               )
                               as T;
                     }
@@ -4444,11 +4345,7 @@ class $$BarcodeProductCacheTableTableManager
           $$BarcodeProductCacheTableUpdateCompanionBuilder,
           (
             BarcodeProductCacheData,
-            BaseReferences<
-              _$AppDatabase,
-              $BarcodeProductCacheTable,
-              BarcodeProductCacheData
-            >,
+            BaseReferences<_$AppDatabase, $BarcodeProductCacheTable, BarcodeProductCacheData>,
           ),
           BarcodeProductCacheData,
           PrefetchHooks Function()
@@ -4462,16 +4359,14 @@ class $$BarcodeProductCacheTableTableManager
           table: table,
           createFilteringComposer: () =>
               $$BarcodeProductCacheTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$BarcodeProductCacheTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$BarcodeProductCacheTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createOrderingComposer: () => $$BarcodeProductCacheTableOrderingComposer(
+            $db: db,
+            $table: table,
+          ),
+          createComputedFieldComposer: () => $$BarcodeProductCacheTableAnnotationComposer(
+            $db: db,
+            $table: table,
+          ),
           updateCompanionCallback:
               ({
                 Value<String> barcode = const Value.absent(),
@@ -4524,9 +4419,8 @@ class $$BarcodeProductCacheTableTableManager
                 expiresAt: expiresAt,
                 rowid: rowid,
               ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+          withReferenceMapper: (p0) =>
+              p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -4544,11 +4438,7 @@ typedef $$BarcodeProductCacheTableProcessedTableManager =
       $$BarcodeProductCacheTableUpdateCompanionBuilder,
       (
         BarcodeProductCacheData,
-        BaseReferences<
-          _$AppDatabase,
-          $BarcodeProductCacheTable,
-          BarcodeProductCacheData
-        >,
+        BaseReferences<_$AppDatabase, $BarcodeProductCacheTable, BarcodeProductCacheData>,
       ),
       BarcodeProductCacheData,
       PrefetchHooks Function()
@@ -4559,10 +4449,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db, _db.categories);
-  $$LocationsTableTableManager get locations =>
-      $$LocationsTableTableManager(_db, _db.locations);
-  $$FoodsTableTableManager get foods =>
-      $$FoodsTableTableManager(_db, _db.foods);
+  $$LocationsTableTableManager get locations => $$LocationsTableTableManager(_db, _db.locations);
+  $$FoodsTableTableManager get foods => $$FoodsTableTableManager(_db, _db.foods);
   $$BarcodeProductCacheTableTableManager get barcodeProductCache =>
       $$BarcodeProductCacheTableTableManager(_db, _db.barcodeProductCache);
 }
