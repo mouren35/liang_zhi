@@ -415,6 +415,15 @@
 - 未解决问题：无；
 - 下一步骤：步骤 41，建立食品列表 Provider。
 
+### 步骤 41：建立食品列表 Provider
+
+- 提交：本步骤提交；
+- 修改文件：食品 Provider、流更新测试与进度文档；
+- 实际验证：替换假 Repository，向监听流推送食品并等待 Provider future；
+- 结果：食品列表由单一 StreamProvider 管理，Repository 变化会自动传播；
+- 未解决问题：无；
+- 下一步骤：步骤 42，建立食品详情 Provider。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
