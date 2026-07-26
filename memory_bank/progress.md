@@ -64,6 +64,15 @@
 - 未解决问题：当前未连接 Android 设备；iOS 构建、真机、签名与 TestFlight 依赖 macOS/外部环境；
 - 下一步骤：步骤 2，配置应用显示名称。
 
+### 步骤 2：配置应用显示名称
+
+- 提交：本步骤提交；
+- 修改文件：Android Manifest、iOS Info.plist、`memory_bank/progress.md`；
+- 实际验证：检查 Android `android:label` 与 iOS `CFBundleDisplayName`/`CFBundleName`；
+- 结果：双端显示名称均为“粮知”；
+- 未解决问题：启动器与 iOS 主屏幕视觉确认分别等待 Android 设备和外部 iOS 环境；
+- 下一步骤：步骤 3，配置应用包标识。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
