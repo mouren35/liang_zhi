@@ -10,6 +10,7 @@ import 'package:liangzhi/shared/models/food.dart';
 import 'package:liangzhi/shared/models/reference_item.dart';
 import 'package:liangzhi/shared/models/shelf_life_calculator.dart';
 import 'package:liangzhi/shared/widgets/responsive_page.dart';
+import 'package:liangzhi/shared/widgets/feedback.dart';
 import 'package:uuid/uuid.dart';
 
 class AddFoodPage extends ConsumerStatefulWidget {
@@ -380,27 +381,13 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
   }
 
   Future<void> _confirmDiscard() async {
-    final bool discard =
-        await showDialog<bool>(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              title: const Text('放弃本次编辑？'),
-              content: const Text('已填写的内容不会保存。'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext, false),
-                  child: const Text('继续编辑'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(dialogContext, true),
-                  child: const Text('放弃'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
+    final bool discard = await showConfirmationDialog(
+      context: context,
+      title: '放弃本次编辑？',
+      message: '已填写的内容不会保存。',
+      confirmLabel: '放弃',
+      cancelLabel: '继续编辑',
+    );
     if (discard && mounted) {
       _dirty = false;
       widget.onCancel();

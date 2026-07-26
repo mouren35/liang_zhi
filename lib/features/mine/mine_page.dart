@@ -4,6 +4,7 @@ import 'package:liangzhi/app/app_info.dart';
 import 'package:liangzhi/shared/design/app_dimensions.dart';
 import 'package:liangzhi/shared/design/app_icons.dart';
 import 'package:liangzhi/shared/widgets/responsive_page.dart';
+import 'package:liangzhi/shared/widgets/feedback.dart';
 
 class MinePage extends StatelessWidget {
   const MinePage({
@@ -95,34 +96,19 @@ class MinePage extends StatelessWidget {
   }
 
   Future<void> _confirmClear(BuildContext context) async {
-    final bool confirmed =
-        await showDialog<bool>(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              title: const Text('清除本地数据？'),
-              content: const Text('食品、条码缓存、设置和待处理提醒将被删除，此操作无法撤销。'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext, false),
-                  child: const Text('取消'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(dialogContext, true),
-                  child: const Text('确认清除'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
+    final bool confirmed = await showConfirmationDialog(
+      context: context,
+      title: '清除本地数据？',
+      message: '食品、条码缓存、设置和待处理提醒将被删除，此操作无法撤销。',
+      confirmLabel: '确认清除',
+    );
     if (!confirmed || !context.mounted) {
       return;
     }
     try {
       await onClearData();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('本地数据已清除')));
+        showSuccessMessage(context, '本地数据已清除');
       }
     } on Object {
       if (context.mounted) {
