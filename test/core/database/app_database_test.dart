@@ -198,6 +198,24 @@ void main() {
     );
   });
 
+  test('食品表只建立计划所需索引', () async {
+    final List<String> indexNames = await database
+        .customSelect("PRAGMA index_list('foods')")
+        .map((QueryRow row) => row.read<String>('name'))
+        .get();
+
+    expect(
+      indexNames,
+      containsAll(<String>[
+        'idx_foods_active_expiry',
+        'idx_foods_updated_at',
+        'idx_foods_category_id',
+        'idx_foods_location_id',
+        'idx_foods_barcode',
+      ]),
+    );
+  });
+
   test('空迁移入口不会丢失旧数据', () async {
     await database.close();
     final Directory temporaryDirectory = await Directory.systemTemp.createTemp('liangzhi_db_');
