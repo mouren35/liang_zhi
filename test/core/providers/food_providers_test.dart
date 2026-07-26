@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/core/providers/food_providers.dart';
 import 'package:liangzhi/core/providers/repository_providers.dart';
+import 'package:liangzhi/core/errors/app_exception.dart';
 import 'package:liangzhi/shared/models/food.dart';
 import 'package:liangzhi/shared/repositories/food_repository.dart';
 
@@ -29,10 +30,46 @@ void main() {
 
     expect(foods.single.name, '苹果');
   });
+
+  test('详情 Provider 处理成功、不存在和读取失败', () async {
+    final _StreamFoodRepository fake = _StreamFoodRepository();
+    final ProviderContainer container = ProviderContainer(
+      overrides: [foodRepositoryProvider.overrideWithValue(fake)],
+    );
+    addTearDown(() async {
+      container.dispose();
+      await fake.close();
+    });
+
+    Future<Food> readDetail(String id) {
+      final provider = foodDetailProvider(id);
+      final ProviderSubscription<AsyncValue<Food>> subscription = container.listen(
+        provider,
+        (AsyncValue<Food>? previous, AsyncValue<Food> next) {},
+        fireImmediately: true,
+      );
+      return container.read(provider.future).whenComplete(subscription.close);
+    }
+
+    expect((await readDetail('food-1')).name, '苹果');
+
+    fake.detailError = const DataNotFoundException();
+    await expectLater(
+      readDetail('missing'),
+      throwsA(isA<DataNotFoundException>()),
+    );
+
+    fake.detailError = const DatabaseUnavailableException();
+    await expectLater(
+      readDetail('failed'),
+      throwsA(isA<DatabaseUnavailableException>()),
+    );
+  });
 }
 
 final class _StreamFoodRepository implements FoodRepository {
   final StreamController<List<Food>> _controller = StreamController<List<Food>>.broadcast();
+  Object? detailError;
 
   void emit(List<Food> foods) => _controller.add(foods);
 
@@ -45,7 +82,12 @@ final class _StreamFoodRepository implements FoodRepository {
   Future<List<Food>> getActiveFoods() async => <Food>[];
 
   @override
-  Future<Food> getById(String id) async => _food();
+  Future<Food> getById(String id) async {
+    if (detailError case final Object error) {
+      throw error;
+    }
+    return _food();
+  }
 
   @override
   Future<void> softDelete(String id, {required DateTime deletedAt}) async {}

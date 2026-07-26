@@ -10,4 +10,5 @@ final StreamProvider<List<Food>> foodListProvider = StreamProvider<List<Food>>(
 final foodDetailProvider = FutureProvider.family<Food, String>(
   (Ref ref, String id) => ref.watch(foodRepositoryProvider).getById(id),
   name: 'foodDetailProvider',
+  retry: (int retryCount, Object error) => null,
 );

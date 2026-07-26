@@ -424,6 +424,15 @@
 - 未解决问题：无；
 - 下一步骤：步骤 42，建立食品详情 Provider。
 
+### 步骤 42：建立食品详情 Provider
+
+- 提交：本步骤提交；
+- 修改文件：详情 Provider 测试与进度文档；
+- 实际验证：分别返回有效食品、DataNotFoundException 和 DatabaseUnavailableException；
+- 结果：family FutureProvider 按食品 ID 独立表达加载、成功、不存在与失败；
+- 未解决问题：无；
+- 下一步骤：步骤 43，建立添加食品操作状态。
+
 ## 6. 外部阻塞与发布前事项
 
 - iOS 真机、签名和 TestFlight 需要外部 Mac、Apple 设备及签名凭据；
