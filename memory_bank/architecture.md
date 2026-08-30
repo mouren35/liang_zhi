@@ -1,7 +1,7 @@
 # 粮知 App 架构说明
 
 > 文档状态：V0.1.0 实施基线
-> 最后更新：2026-07-26
+> 最后更新：2026-07-27
 > 适用平台：Android、iOS
 > 应用标识：`com.liangzhi.app`
 
@@ -29,7 +29,9 @@ V0.1.0 不包含用户账号、云同步、家庭共享、二维码解析、图�
 - `go_router` 负责声明式路由和五项底部导航状态保持。
 - `mobile_scanner` 负责一维条形码扫描；通过格式白名单只启用 EAN-8、EAN-13、UPC-A、UPC-E 和 Code 128。
 - `package:http` 负责 Open Food Facts 只读查询，业务层注入 `Client` 以便替换服务和自动化测试。
-- `flutter_local_notifications` 配合 `timezone` 负责 Android/iOS 本地定时通知；基础版不申请精确闹钟权限。
+- `flutter_local_notifications`、`flutter_timezone` 配合 `timezone` 负责 Android/iOS 本地定时通知与设备时区刷新；基础版不申请精确闹钟权限。
+- `package_info_plus` 读取实际安装包名称、版本号和构建号；页面不得用硬编码值冒充运行时版本。
+- `flutter_launcher_icons` 与 `flutter_native_splash` 只作为开发生成器，正式资源生成后提交到 Android/iOS 工程。
 - 测试代码可注入时间源；需要统一时间抽象时使用 `clock`，不得在业务规则中散落直接读取系统时间的逻辑。
 - 通过 `--dart-define=APP_ENV=development|test|production` 区分环境，不建立原生 Flavor，不改变包标识。
 - Open Food Facts 基地址通过 `--dart-define` 注入；生产默认使用固定版本的 HTTPS API。
@@ -99,7 +101,8 @@ flowchart TD
 - 所有触控区域不小于 48×48 逻辑像素；
 - 200% 文本缩放下关键内容和操作仍可访问；
 - 库存默认使用列表视图，不预置虚假食品数据；
-- Logo、应用图标和启动页使用原创“粮知”视觉，不沿用默认 Flutter 图标。
+- Logo、应用图标和启动页使用原创“粮知”麦穗与双叶视觉，不沿用默认 Flutter 图标；
+- 品牌母版位于 `assets/branding/liangzhi_app_icon.png`，Android 自适应透明前景位于 `assets/branding/liangzhi_icon_foreground.png`；Android/iOS 各尺寸资源由生成器派生，不手工拉伸。
 
 ## 6. 食品与日期规则
 
@@ -265,13 +268,17 @@ flowchart TD
 
 - 只识别商品一维条形码，不解析二维码；
 - 支持 EAN-8、EAN-13、UPC-A、UPC-E、Code 128；
-- 扫描结果先规范化并校验，再查本地缓存，最后请求 Open Food Facts；
-- Open Food Facts 使用只读商品接口，参数固定包含 `cc=cn`、`lc=zh`、`tags_lc=zh` 和最小字段集合；
+- EAN/UPC 校验校验位；UPC-A 和 UPC-E 展开并规范化为 13 位查询值，Code 128 去除首尾空白并拒绝控制字符；
+- 扫描结果先规范化并校验，再依次查询已保存食品、有效本地缓存和 Open Food Facts；
+- Open Food Facts 使用固定 `GET /api/v2/product/{barcode}.json` 只读接口，参数固定包含 `cc=cn`、`lc=zh`、`tags_lc=zh`，字段仅为 `code,product_name,brands,quantity,image_front_url,categories_tags`；
 - User-Agent 使用 `LiangZhi/<version> (https://github.com/mouren35/liang_zhi)`；
 - 远程数据只填充名称、品牌、规格、图片和分类建议；
 - 生产日期、保质期和到期日期不得信任远程商品记录，必须由用户确认或输入；
 - 无网络、超时、限流、服务错误或未命中时立即进入带条码的手动添加页；
+- 有效命中缓存 30 天、未命中缓存 24 小时；过期命中刷新失败时可使用旧值，但添加页必须显示核对提示；
+- 已保存食品优先于远程缓存，用同一条码再次扫描时复用用户确认的数据，远程刷新不得修改食品记录；
 - 扫描结果去抖，同一条码在处理完成前只发起一次查询；
+- 相机拒绝状态显示用途说明，并通过原生 MethodChannel 打开 Android/iOS 应用设置页；
 - V0.1.0 不向 Open Food Facts 写入商品或上传图片；
 - “我的”页面展示 Open Food Facts 数据来源和许可证说明。
 
@@ -293,9 +300,19 @@ flowchart TD
 - 用户可关闭通知、调整时间、覆盖提前天数、关闭已过期提醒、每日汇总或长期未更新提醒；
 - 调度采用设备当前时区；时区变化、应用启动、食品增删改、设置变更和清除数据后重新计算；
 - 滚动预排未来 30 天的每日汇总，避免超过 iOS 待处理通知数量限制；
+- 单次调度最多 31 条，先取消旧待处理通知再整体替换；食品已经成功保存后，重调度作为失败隔离的后台任务执行，不阻塞页面返回或回滚食品；
 - 使用非精确定时能力，不申请 Android 精确闹钟权限；
 - 长期未更新基于所有食品的最大 `updated_at`；无食品时不发送；
 - 清除本地数据时取消全部待处理通知。
+
+平台边界：
+
+- 启动时只初始化通知插件，不主动申请权限；
+- 数据库默认项、SharedPreferences 和通知/时区三组独立启动任务并行完成后再渲染应用；通知使用覆盖当前时间前后五年的 `latest_10y` IANA 数据，足以支持 30 天滚动调度并降低启动解析与包体开销；
+- Android 13+ 与 iOS 权限状态通过平台通道映射为未请求、允许、拒绝和永久拒绝；
+- Android 声明 `POST_NOTIFICATIONS`、`RECEIVE_BOOT_COMPLETED` 和插件调度接收器，不声明精确闹钟权限；
+- 应用启动/恢复、食品增删改、设置变化和设备时区变化均触发重算；系统返回 `GMT`/`UTC` 时统一映射为 IANA `Etc/UTC`；
+- 前台、后台和冷启动通知负载统一为 `/expirations`，在路由就绪前先暂存再导航。
 
 ## 11. 设置存储
 
@@ -312,6 +329,7 @@ SharedPreferences 键必须集中定义并带版本前缀：
 | `v1.daily_summary_enabled` | bool | `true` |
 | `v1.long_term_reminder_enabled` | bool | `true` |
 | `v1.long_term_reminder_days` | int | `30` |
+| `v1.notification_permission_requested` | bool | `false` |
 
 首次启动状态和列表视图偏好在 V0.1.0 只提供存储服务与测试，不显示无效设置入口。
 
@@ -351,7 +369,10 @@ SharedPreferences 键必须集中定义并带版本前缀：
 - Provider/控制器状态测试；
 - 关键页面组件测试；
 - 条码命中、未命中、离线、超时和重复扫描测试；
+- Android 受控条码集成测试覆盖扫码命中、补充到期日期、保存和列表回显；相机权限允许/拒绝与系统设置入口在 Android 模拟器手工验证；
 - 通知权限、聚合、时间边界、重调度和清除测试；
+- Android API 37 平台集成测试实际覆盖首次保存权限弹窗、通知展示和从通知栏点击进入到期提醒；
+- Profile 集成测试以 100 条食品覆盖首页首屏、列表首屏、长列表滚动、详情和增删流更新；
 - Android 最小端到端流程。
 
 验收标准：
