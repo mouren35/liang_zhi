@@ -1,7 +1,7 @@
 enum AppEnvironment {
   development('development', '开发环境'),
   test('test', '测试环境'),
-  production('production', '');
+  production('production', '正式环境');
 
   const AppEnvironment(this.value, this.label);
 

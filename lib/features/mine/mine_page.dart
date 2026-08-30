@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:liangzhi/app/app_config.dart';
-import 'package:liangzhi/app/app_info.dart';
+import 'package:liangzhi/app/app_runtime_info.dart';
 import 'package:liangzhi/shared/design/app_dimensions.dart';
 import 'package:liangzhi/shared/design/app_icons.dart';
 import 'package:liangzhi/shared/widgets/responsive_page.dart';
 import 'package:liangzhi/shared/widgets/feedback.dart';
 
-class MinePage extends StatelessWidget {
+class MinePage extends StatefulWidget {
   const MinePage({
     required this.config,
     required this.onOpenNotificationSettings,
     required this.onClearData,
     required this.onCleared,
+    this.loadRuntimeInfo,
     super.key,
   });
 
@@ -19,6 +20,15 @@ class MinePage extends StatelessWidget {
   final VoidCallback onOpenNotificationSettings;
   final Future<void> Function() onClearData;
   final VoidCallback onCleared;
+  final Future<AppRuntimeInfo> Function()? loadRuntimeInfo;
+
+  @override
+  State<MinePage> createState() => _MinePageState();
+}
+
+class _MinePageState extends State<MinePage> {
+  late final Future<AppRuntimeInfo> _runtimeInfo =
+      widget.loadRuntimeInfo?.call() ?? AppRuntimeInfo.load();
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +42,28 @@ class MinePage extends StatelessWidget {
             _Section(
               title: '应用信息',
               children: [
-                const ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text(AppInfo.name),
-                  subtitle: Text('版本 ${AppInfo.version}（${AppInfo.buildNumber}）'),
+                FutureBuilder<AppRuntimeInfo>(
+                  future: _runtimeInfo,
+                  builder:
+                      (
+                        BuildContext context,
+                        AsyncSnapshot<AppRuntimeInfo> snapshot,
+                      ) {
+                        final AppRuntimeInfo info = snapshot.data ?? AppRuntimeInfo.fallback;
+                        return ListTile(
+                          leading: const Icon(Icons.info_outline),
+                          title: Text(info.name),
+                          subtitle: Text(
+                            '版本 ${info.version}（构建 ${info.buildNumber}）',
+                          ),
+                        );
+                      },
                 ),
-                if (config.showEnvironmentBadge)
-                  ListTile(
-                    leading: const Icon(Icons.developer_mode_outlined),
-                    title: const Text('当前环境'),
-                    subtitle: Text(config.environment.label),
-                  ),
+                ListTile(
+                  leading: const Icon(Icons.developer_mode_outlined),
+                  title: const Text('当前环境'),
+                  subtitle: Text(widget.config.environment.label),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -54,7 +75,7 @@ class MinePage extends StatelessWidget {
                   leading: const Icon(AppIcons.notification),
                   title: const Text('通知设置'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: onOpenNotificationSettings,
+                  onTap: widget.onOpenNotificationSettings,
                 ),
                 const ListTile(
                   leading: Icon(Icons.phone_android_outlined),
@@ -108,10 +129,10 @@ class MinePage extends StatelessWidget {
       return;
     }
     try {
-      await onClearData();
+      await widget.onClearData();
       if (context.mounted) {
         showSuccessMessage(context, '本地数据已清除');
-        onCleared();
+        widget.onCleared();
       }
     } on Object {
       if (context.mounted) {

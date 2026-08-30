@@ -1,7 +1,8 @@
 enum FoodStatus {
   active('active'),
   consumed('consumed'),
-  discarded('discarded');
+  discarded('discarded')
+  ;
 
   const FoodStatus(this.storageValue);
 
@@ -17,7 +18,8 @@ enum FoodStatus {
 
 enum ExpiryInputType {
   direct('direct'),
-  productionShelfLife('production_shelf_life');
+  productionShelfLife('production_shelf_life')
+  ;
 
   const ExpiryInputType(this.storageValue);
 
@@ -34,7 +36,8 @@ enum ExpiryInputType {
 enum ShelfLifeUnit {
   day('day', '天'),
   month('month', '月'),
-  year('year', '年');
+  year('year', '年')
+  ;
 
   const ShelfLifeUnit(this.storageValue, this.label);
 

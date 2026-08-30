@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/global_error_handler.dart';
 import 'package:liangzhi/core/database/app_database.dart';
 import 'package:liangzhi/core/database/default_data.dart';
+import 'package:liangzhi/core/notifications/flutter_notification_platform.dart';
+import 'package:liangzhi/core/notifications/notification_navigation_service.dart';
 import 'package:liangzhi/core/settings/settings_service.dart';
-import 'package:timezone/data/latest.dart' as timezone_data;
+import 'package:timezone/data/latest_10y.dart' as timezone_data;
 
 typedef InitializationTask = Future<void> Function();
 
@@ -21,9 +22,11 @@ Future<void> bootstrap({
   installGlobalErrorHandlers(AppConfig.current);
 
   try {
-    await (initializeDatabase ?? _initializeDatabase)();
-    await (initializeSettings ?? _initializeSettings)();
-    await (initializeNotifications ?? _initializeNotifications)();
+    await Future.wait<void>(<Future<void>>[
+      (initializeDatabase ?? _initializeDatabase)(),
+      (initializeSettings ?? _initializeSettings)(),
+      (initializeNotifications ?? _initializeNotifications)(),
+    ], eagerError: true);
     runApp(ProviderScope(child: LiangZhiApp()));
   } on Object {
     runApp(const _InitializationFailureApp());
@@ -47,15 +50,9 @@ Future<void> _initializeNotifications() async {
     return;
   }
 
-  const InitializationSettings settings = InitializationSettings(
-    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    iOS: DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    ),
+  await FlutterNotificationPlatform.instance.initialize(
+    onNotificationTap: NotificationNavigationService.instance.handlePayload,
   );
-  await FlutterLocalNotificationsPlugin().initialize(settings: settings);
 }
 
 class _InitializationFailureApp extends StatelessWidget {

@@ -21,7 +21,11 @@ void main() {
     await repository.add(original);
     expect((await repository.getActiveFoods()).single.name, '苹果');
 
-    final Food updated = original.copyWith(name: '红苹果', quantity: 2, updatedAt: DateTime.utc(2026, 7, 2));
+    final Food updated = original.copyWith(
+      name: '红苹果',
+      quantity: 2,
+      updatedAt: DateTime.utc(2026, 7, 2),
+    );
     await repository.update(updated);
     expect((await repository.getById(original.id)).name, '红苹果');
 

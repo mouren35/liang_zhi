@@ -7,11 +7,14 @@ import 'package:integration_test/integration_test.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
 import 'package:liangzhi/core/providers/repository_providers.dart';
+import 'package:liangzhi/core/providers/service_providers.dart';
 import 'package:liangzhi/shared/constants/default_ids.dart';
 import 'package:liangzhi/shared/models/food.dart';
 import 'package:liangzhi/shared/models/reference_item.dart';
 import 'package:liangzhi/shared/repositories/food_repository.dart';
 import 'package:liangzhi/shared/repositories/reference_data_repository.dart';
+
+import 'support/granted_notification_platform.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +26,9 @@ void main() {
         foodRepositoryProvider.overrideWithValue(foods),
         categoryRepositoryProvider.overrideWithValue(const _CategoryRepository()),
         locationRepositoryProvider.overrideWithValue(const _LocationRepository()),
+        notificationPlatformProvider.overrideWithValue(
+          const GrantedNotificationPlatform(),
+        ),
       ],
       child: LiangZhiApp(
         config: AppConfig(
@@ -50,7 +56,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
-    final Element formListElement = find.byType(ListView).evaluate().last;
+    final Element formListElement = find.byType(SingleChildScrollView).evaluate().last;
     final Finder formList = find.byElementPredicate(
       (Element element) => identical(element, formListElement),
     );

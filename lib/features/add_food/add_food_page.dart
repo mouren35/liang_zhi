@@ -22,7 +22,9 @@ class AddFoodPage extends ConsumerStatefulWidget {
     this.initialBrand,
     this.initialSpecification,
     this.initialRemoteImageUrl,
+    this.initialCategoryId,
     this.initialExpiryDate,
+    this.showRemoteDataWarning = false,
     super.key,
   });
 
@@ -33,7 +35,9 @@ class AddFoodPage extends ConsumerStatefulWidget {
   final String? initialBrand;
   final String? initialSpecification;
   final Uri? initialRemoteImageUrl;
+  final String? initialCategoryId;
   final DateTime? initialExpiryDate;
+  final bool showRemoteDataWarning;
 
   @override
   ConsumerState<AddFoodPage> createState() => _AddFoodPageState();
@@ -42,6 +46,8 @@ class AddFoodPage extends ConsumerStatefulWidget {
 class _AddFoodPageState extends ConsumerState<AddFoodPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _brandController;
+  late final TextEditingController _specificationController;
   late final TextEditingController _quantityController;
   late final TextEditingController _unitController;
   final TextEditingController _shelfLifeController = TextEditingController();
@@ -58,14 +64,21 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
+    _brandController = TextEditingController(text: widget.initialBrand);
+    _specificationController = TextEditingController(
+      text: widget.initialSpecification,
+    );
     _quantityController = TextEditingController(text: '1');
     _unitController = TextEditingController(text: '份');
     _expiryDate = widget.initialExpiryDate;
+    _categoryId = widget.initialCategoryId ?? DefaultIds.categoryOther;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _brandController.dispose();
+    _specificationController.dispose();
     _quantityController.dispose();
     _unitController.dispose();
     _shelfLifeController.dispose();
@@ -103,85 +116,66 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
                 setState(() => _dirty = true);
               }
             },
-            child: ListView(
+            child: SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [
-                if (widget.initialBarcode != null) ...[
-                  Text('条形码 ${widget.initialBarcode}'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (widget.initialBarcode != null) ...[
+                    Text('条形码 ${widget.initialBarcode}'),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
+                  if (widget.showRemoteDataWarning) ...[
+                    const Text(
+                      '当前展示的是过期缓存，请核对商品信息后再保存。',
+                      style: TextStyle(color: AppColors.expiring),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
+                  if (widget.initialRemoteImageUrl != null) ...[
+                    SizedBox(
+                      height: 140,
+                      child: Image.network(
+                        widget.initialRemoteImageUrl.toString(),
+                        fit: BoxFit.contain,
+                        errorBuilder:
+                            (
+                              BuildContext context,
+                              Object error,
+                              StackTrace? stack,
+                            ) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.image_not_supported_outlined,
+                                  size: 48,
+                                ),
+                              );
+                            },
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
+                  TextFormField(
+                    key: const ValueKey<String>('food-name'),
+                    controller: _nameController,
+                    maxLength: 100,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(labelText: '食品名称 *'),
+                    validator: _validateName,
+                  ),
                   const SizedBox(height: AppSpacing.sm),
-                ],
-                TextFormField(
-                  key: const ValueKey<String>('food-name'),
-                  controller: _nameController,
-                  maxLength: 100,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: '食品名称 *'),
-                  validator: _validateName,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        key: const ValueKey<String>('food-quantity'),
-                        controller: _quantityController,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,3}')),
-                        ],
-                        decoration: const InputDecoration(labelText: '数量 *'),
-                        validator: _validateQuantity,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _unitController,
-                        maxLength: 20,
-                        decoration: const InputDecoration(labelText: '单位 *', counterText: ''),
-                        validator: _validateUnit,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                SegmentedButton<ExpiryInputType>(
-                  segments: const [
-                    ButtonSegment<ExpiryInputType>(
-                      value: ExpiryInputType.direct,
-                      label: Text('直接到期日期'),
-                    ),
-                    ButtonSegment<ExpiryInputType>(
-                      value: ExpiryInputType.productionShelfLife,
-                      label: Text('生产日期＋保质期'),
-                    ),
-                  ],
-                  selected: <ExpiryInputType>{_expiryInputType},
-                  onSelectionChanged: submitState.isLoading
-                      ? null
-                      : (Set<ExpiryInputType> values) {
-                          setState(() {
-                            _expiryInputType = values.single;
-                            _expiryError = null;
-                            _dirty = true;
-                          });
-                        },
-                ),
-                const SizedBox(height: AppSpacing.md),
-                if (_expiryInputType == ExpiryInputType.direct)
-                  _DateField(
-                    key: const ValueKey<String>('expiry-date'),
-                    label: '到期日期 *',
-                    value: _expiryDate,
-                    onTap: () => _pickDate(isProductionDate: false),
-                  )
-                else ...[
-                  _DateField(
-                    key: const ValueKey<String>('production-date'),
-                    label: '生产日期 *',
-                    value: _productionDate,
-                    onTap: () => _pickDate(isProductionDate: true),
+                  TextFormField(
+                    key: const ValueKey<String>('food-brand'),
+                    controller: _brandController,
+                    maxLength: 100,
+                    decoration: const InputDecoration(labelText: '品牌（可选）'),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  TextFormField(
+                    key: const ValueKey<String>('food-specification'),
+                    controller: _specificationController,
+                    maxLength: 100,
+                    decoration: const InputDecoration(labelText: '规格（可选）'),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Row(
@@ -189,71 +183,138 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          key: const ValueKey<String>('shelf-life-value'),
-                          controller: _shelfLifeController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          decoration: const InputDecoration(labelText: '保质期 *'),
+                          key: const ValueKey<String>('food-quantity'),
+                          controller: _quantityController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,3}')),
+                          ],
+                          decoration: const InputDecoration(labelText: '数量 *'),
+                          validator: _validateQuantity,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      DropdownButton<ShelfLifeUnit>(
-                        value: _shelfLifeUnit,
-                        items: ShelfLifeUnit.values
-                            .map(
-                              (ShelfLifeUnit unit) =>
-                                  DropdownMenuItem(value: unit, child: Text(unit.label)),
-                            )
-                            .toList(growable: false),
-                        onChanged: (ShelfLifeUnit? value) {
-                          if (value != null) {
-                            setState(() {
-                              _shelfLifeUnit = value;
-                              _dirty = true;
-                            });
-                          }
-                        },
+                      Expanded(
+                        child: TextFormField(
+                          controller: _unitController,
+                          maxLength: 20,
+                          decoration: const InputDecoration(labelText: '单位 *', counterText: ''),
+                          validator: _validateUnit,
+                        ),
                       ),
                     ],
                   ),
-                ],
-                if (_expiryError != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(_expiryError!, style: const TextStyle(color: AppColors.error)),
-                ],
-                if (_selectedExpiryDate()?.isBefore(dateOnly(DateTime.now())) ?? false) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  const Text(
-                    '所选日期已经过去，仍可保存，请确认记录是否正确。',
-                    style: TextStyle(color: AppColors.expiring),
+                  const SizedBox(height: AppSpacing.md),
+                  SegmentedButton<ExpiryInputType>(
+                    segments: const [
+                      ButtonSegment<ExpiryInputType>(
+                        value: ExpiryInputType.direct,
+                        label: Text('直接到期日期'),
+                      ),
+                      ButtonSegment<ExpiryInputType>(
+                        value: ExpiryInputType.productionShelfLife,
+                        label: Text('生产日期＋保质期'),
+                      ),
+                    ],
+                    selected: <ExpiryInputType>{_expiryInputType},
+                    onSelectionChanged: submitState.isLoading
+                        ? null
+                        : (Set<ExpiryInputType> values) {
+                            setState(() {
+                              _expiryInputType = values.single;
+                              _expiryError = null;
+                              _dirty = true;
+                            });
+                          },
                   ),
+                  const SizedBox(height: AppSpacing.md),
+                  if (_expiryInputType == ExpiryInputType.direct)
+                    _DateField(
+                      key: const ValueKey<String>('expiry-date'),
+                      label: '到期日期 *',
+                      value: _expiryDate,
+                      onTap: () => _pickDate(isProductionDate: false),
+                    )
+                  else ...[
+                    _DateField(
+                      key: const ValueKey<String>('production-date'),
+                      label: '生产日期 *',
+                      value: _productionDate,
+                      onTap: () => _pickDate(isProductionDate: true),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            key: const ValueKey<String>('shelf-life-value'),
+                            controller: _shelfLifeController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            decoration: const InputDecoration(labelText: '保质期 *'),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        DropdownButton<ShelfLifeUnit>(
+                          value: _shelfLifeUnit,
+                          items: ShelfLifeUnit.values
+                              .map(
+                                (ShelfLifeUnit unit) =>
+                                    DropdownMenuItem(value: unit, child: Text(unit.label)),
+                              )
+                              .toList(growable: false),
+                          onChanged: (ShelfLifeUnit? value) {
+                            if (value != null) {
+                              setState(() {
+                                _shelfLifeUnit = value;
+                                _dirty = true;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (_expiryError != null) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(_expiryError!, style: const TextStyle(color: AppColors.error)),
+                  ],
+                  if (_selectedExpiryDate()?.isBefore(dateOnly(DateTime.now())) ?? false) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    const Text(
+                      '所选日期已经过去，仍可保存，请确认记录是否正确。',
+                      style: TextStyle(color: AppColors.expiring),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                  _ReferenceDropdown(
+                    label: '分类',
+                    value: _categoryId,
+                    items: categories,
+                    onChanged: (String value) => setState(() => _categoryId = value),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _ReferenceDropdown(
+                    label: '存放位置',
+                    value: _locationId,
+                    items: locations,
+                    onChanged: (String value) => setState(() => _locationId = value),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  FilledButton(
+                    key: const ValueKey<String>('save-food'),
+                    onPressed: submitState.isLoading ? null : _submit,
+                    child: submitState.isLoading
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('保存'),
+                  ),
+                  const SizedBox(height: AppSpacing.xxl),
                 ],
-                const SizedBox(height: AppSpacing.md),
-                _ReferenceDropdown(
-                  label: '分类',
-                  value: _categoryId,
-                  items: categories,
-                  onChanged: (String value) => setState(() => _categoryId = value),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                _ReferenceDropdown(
-                  label: '存放位置',
-                  value: _locationId,
-                  items: locations,
-                  onChanged: (String value) => setState(() => _locationId = value),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                FilledButton(
-                  key: const ValueKey<String>('save-food'),
-                  onPressed: submitState.isLoading ? null : _submit,
-                  child: submitState.isLoading
-                      ? const SizedBox.square(
-                          dimension: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('保存'),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -340,8 +401,8 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
       id: const Uuid().v4(),
       barcode: widget.initialBarcode,
       name: _nameController.text,
-      brand: widget.initialBrand,
-      specification: widget.initialSpecification,
+      brand: _optionalText(_brandController.text),
+      specification: _optionalText(_specificationController.text),
       imageRemoteUrl: widget.initialRemoteImageUrl,
       categoryId: _categoryId,
       locationId: _locationId,
@@ -395,6 +456,11 @@ class _AddFoodPageState extends ConsumerState<AddFoodPage> {
       widget.onCancel();
     }
   }
+}
+
+String? _optionalText(String value) {
+  final String normalized = value.trim();
+  return normalized.isEmpty ? null : normalized;
 }
 
 class _DateField extends StatelessWidget {

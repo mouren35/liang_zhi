@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/app/app_routes.dart';
 import 'package:liangzhi/app/liang_zhi_app.dart';
+import 'package:liangzhi/core/notifications/notification_navigation_service.dart';
 import 'package:liangzhi/features/foods/foods_page.dart';
 
 import '../support/test_scope.dart';
@@ -29,6 +30,7 @@ void main() {
       (AppRoutes.addFood, '添加食物'),
       (AppRoutes.foodDetail('food-1'), '食品不存在或已经删除'),
       (AppRoutes.mine, '我的'),
+      (AppRoutes.notificationSettings, '通知设置'),
     ]) {
       router.go(path);
       await tester.pumpAndSettle();
@@ -121,6 +123,30 @@ void main() {
     await tester.tap(find.text('返回首页'));
     await tester.pumpAndSettle();
     expect(router.routeInformationProvider.value.uri.path, AppRoutes.home);
+  });
+
+  testWidgets('前台通知点击统一进入到期提醒', (WidgetTester tester) async {
+    final GoRouter router = createAppRouter();
+    await tester.pumpWidget(
+      _testApp(
+        router: router,
+        config: AppConfig(
+          environment: AppEnvironment.production,
+          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    NotificationNavigationService.instance.handlePayload(
+      AppRoutes.expirations,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      AppRoutes.expirations,
+    );
   });
 }
 

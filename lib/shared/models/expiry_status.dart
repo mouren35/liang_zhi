@@ -16,9 +16,7 @@ ExpiryStatus calculateExpiryStatus(
     return ExpiryStatus.dueToday;
   }
   final int reminderDays =
-      food.reminderDaysBefore ??
-      globalReminderDaysOverride ??
-      defaultReminderDays(food);
+      food.reminderDaysBefore ?? globalReminderDaysOverride ?? defaultReminderDays(food);
   return remainingDays <= reminderDays ? ExpiryStatus.expiring : ExpiryStatus.fresh;
 }
 

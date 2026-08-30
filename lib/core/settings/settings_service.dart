@@ -10,6 +10,7 @@ abstract final class SettingsKeys {
   static const String dailySummaryEnabled = 'v1.daily_summary_enabled';
   static const String longTermReminderEnabled = 'v1.long_term_reminder_enabled';
   static const String longTermReminderDays = 'v1.long_term_reminder_days';
+  static const String notificationPermissionRequested = 'v1.notification_permission_requested';
 
   static const Set<String> all = <String>{
     hasCompletedInitialLaunch,
@@ -21,6 +22,7 @@ abstract final class SettingsKeys {
     dailySummaryEnabled,
     longTermReminderEnabled,
     longTermReminderDays,
+    notificationPermissionRequested,
   };
 }
 
@@ -51,6 +53,7 @@ final class AppSettings {
     required this.dailySummaryEnabled,
     required this.longTermReminderEnabled,
     required this.longTermReminderDays,
+    required this.notificationPermissionRequested,
   });
 
   final bool hasCompletedInitialLaunch;
@@ -62,6 +65,7 @@ final class AppSettings {
   final bool dailySummaryEnabled;
   final bool longTermReminderEnabled;
   final int longTermReminderDays;
+  final bool notificationPermissionRequested;
 }
 
 final class SettingsService {
@@ -104,6 +108,11 @@ final class SettingsService {
         _preferences.getInt(SettingsKeys.longTermReminderDays),
         fallback: 30,
       ),
+      notificationPermissionRequested:
+          _preferences.getBool(
+            SettingsKeys.notificationPermissionRequested,
+          ) ??
+          false,
     );
   }
 
@@ -154,6 +163,13 @@ final class SettingsService {
       throw const FormatException('长期未更新天数必须大于 0');
     }
     return _preferences.setInt(SettingsKeys.longTermReminderDays, value);
+  }
+
+  Future<void> setNotificationPermissionRequested(bool value) {
+    return _preferences.setBool(
+      SettingsKeys.notificationPermissionRequested,
+      value,
+    );
   }
 
   Future<void> clear() async {

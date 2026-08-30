@@ -65,8 +65,7 @@ class _InventoryOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     final int expiring = foods
         .where(
-          (Food food) =>
-              calculateExpiryStatus(food, today: today) == ExpiryStatus.expiring,
+          (Food food) => calculateExpiryStatus(food, today: today) == ExpiryStatus.expiring,
         )
         .length;
     final int expired = foods
@@ -110,7 +109,10 @@ class _MetricCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$value', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: color)),
+              Text(
+                '$value',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: color),
+              ),
               const SizedBox(height: AppSpacing.xxs),
               Text(label, style: Theme.of(context).textTheme.bodySmall),
             ],
@@ -132,8 +134,7 @@ class _ExpirySummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final int attentionCount = foods
         .where(
-          (Food food) =>
-              calculateExpiryStatus(food, today: today) != ExpiryStatus.fresh,
+          (Food food) => calculateExpiryStatus(food, today: today) != ExpiryStatus.fresh,
         )
         .length;
     return Card(

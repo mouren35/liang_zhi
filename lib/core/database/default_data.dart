@@ -3,16 +3,16 @@ import 'package:liangzhi/core/database/app_database.dart';
 import 'package:liangzhi/shared/constants/default_ids.dart';
 
 const List<(String, String)> _defaultCategories = <(String, String)>[
-  ('category_staple', '主食'),
-  ('category_meat_poultry', '肉禽'),
-  ('category_seafood', '水产'),
-  ('category_vegetables', '蔬菜'),
-  ('category_fruits', '水果'),
-  ('category_dairy', '乳制品'),
-  ('category_beverages', '饮料'),
-  ('category_snacks', '零食'),
-  ('category_condiments', '调味品'),
-  ('category_frozen', '冷冻食品'),
+  (DefaultIds.categoryStaple, '主食'),
+  (DefaultIds.categoryMeatPoultry, '肉禽'),
+  (DefaultIds.categorySeafood, '水产'),
+  (DefaultIds.categoryVegetables, '蔬菜'),
+  (DefaultIds.categoryFruits, '水果'),
+  (DefaultIds.categoryDairy, '乳制品'),
+  (DefaultIds.categoryBeverages, '饮料'),
+  (DefaultIds.categorySnacks, '零食'),
+  (DefaultIds.categoryCondiments, '调味品'),
+  (DefaultIds.categoryFrozen, '冷冻食品'),
   (DefaultIds.categoryOther, '其他'),
 ];
 

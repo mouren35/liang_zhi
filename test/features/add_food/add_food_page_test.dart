@@ -26,13 +26,14 @@ void main() {
       ),
     );
 
+    await _showSaveButton(tester);
     await tester.tap(find.byKey(const ValueKey<String>('save-food')));
     await tester.pump();
     expect(find.text('请输入食品名称'), findsOneWidget);
 
     await tester.enterText(find.byKey(const ValueKey<String>('food-name')), '  苹果  ');
     await tester.enterText(find.byKey(const ValueKey<String>('food-quantity')), '1.25');
-    await tester.ensureVisible(find.byKey(const ValueKey<String>('save-food')));
+    await _showSaveButton(tester);
     await tester.tap(find.byKey(const ValueKey<String>('save-food')));
     await tester.pumpAndSettle();
 
@@ -55,7 +56,7 @@ void main() {
       ),
     );
     await tester.enterText(find.byKey(const ValueKey<String>('food-name')), '牛奶');
-    await tester.ensureVisible(find.byKey(const ValueKey<String>('save-food')));
+    await _showSaveButton(tester);
     await tester.tap(find.byKey(const ValueKey<String>('save-food')));
     await tester.pumpAndSettle();
 
@@ -90,6 +91,74 @@ void main() {
     await tester.pumpAndSettle();
     expect(cancelled, isTrue);
   });
+
+  testWidgets('扫码商品基础信息可编辑并随条码保存', (WidgetTester tester) async {
+    final _AddRepository repository = _AddRepository();
+    Food? saved;
+    await _pump(
+      tester,
+      repository: repository,
+      page: AddFoodPage(
+        initialBarcode: '6901234567892',
+        initialName: '远程名称',
+        initialBrand: '远程品牌',
+        initialSpecification: '250 ml',
+        initialExpiryDate: DateTime(2026, 8),
+        onSaved: (Food food) => saved = food,
+        onCancel: () {},
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('food-name')),
+      '用户名称',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('food-brand')),
+      '用户品牌',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('food-specification')),
+      '300 ml',
+    );
+    await _showSaveButton(tester);
+    await tester.tap(find.byKey(const ValueKey<String>('save-food')));
+    await tester.pumpAndSettle();
+
+    expect(saved?.barcode, '6901234567892');
+    expect(saved?.name, '用户名称');
+    expect(saved?.brand, '用户品牌');
+    expect(saved?.specification, '300 ml');
+  });
+
+  testWidgets('远程图片加载失败显示占位且表单仍可使用', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      repository: _AddRepository(),
+      page: AddFoodPage(
+        initialName: '测试商品',
+        initialRemoteImageUrl: Uri.parse(
+          'https://invalid.example/product.jpg',
+        ),
+        initialExpiryDate: DateTime(2026, 8),
+        onSaved: (Food food) {},
+        onCancel: () {},
+      ),
+    );
+
+    expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('food-name')), findsOneWidget);
+  });
+}
+
+Future<void> _showSaveButton(WidgetTester tester) async {
+  FocusManager.instance.primaryFocus?.unfocus();
+  tester.testTextInput.hide();
+  await tester.pumpAndSettle();
+  await tester.ensureVisible(find.byKey(const ValueKey<String>('save-food')));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _pump(

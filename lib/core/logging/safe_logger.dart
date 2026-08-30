@@ -3,8 +3,7 @@ import 'package:flutter/foundation.dart';
 typedef LogOutput = void Function(String message);
 
 final class SafeLogger {
-  SafeLogger({required this.enabled, LogOutput? output})
-    : output = output ?? debugPrint;
+  SafeLogger({required this.enabled, LogOutput? output}) : output = output ?? debugPrint;
 
   final bool enabled;
   final LogOutput output;

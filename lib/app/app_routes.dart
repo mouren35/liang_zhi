@@ -7,12 +7,14 @@ import 'package:liangzhi/features/food_detail/food_detail_page.dart';
 import 'package:liangzhi/features/foods/foods_page.dart';
 import 'package:liangzhi/features/home/home_page.dart';
 import 'package:liangzhi/features/mine/mine_page.dart';
+import 'package:liangzhi/features/mine/notification_settings_page.dart';
 import 'package:liangzhi/features/scan/scan_page.dart';
 import 'package:liangzhi/app/app_shell.dart';
 import 'package:liangzhi/app/route_error_page.dart';
 import 'package:liangzhi/app/app_config.dart';
 import 'package:liangzhi/core/providers/service_providers.dart';
 import 'package:liangzhi/shared/models/food.dart';
+import 'package:liangzhi/shared/models/product_lookup.dart';
 
 abstract final class AppRoutes {
   static const String home = '/home';
@@ -21,12 +23,16 @@ abstract final class AppRoutes {
   static const String foods = '/foods';
   static const String addFood = '/add';
   static const String mine = '/mine';
+  static const String notificationSettings = '/mine/notifications';
   static const String foodDetailPattern = '/foods/:foodId';
 
   static String foodDetail(String foodId) => '/foods/${Uri.encodeComponent(foodId)}';
 }
 
-GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
+GoRouter createAppRouter({
+  String initialLocation = AppRoutes.home,
+  ScannerViewBuilder? scannerBuilder,
+}) {
   return GoRouter(
     initialLocation: initialLocation,
     errorBuilder: (BuildContext context, GoRouterState state) {
@@ -72,7 +78,22 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
               GoRoute(
                 path: AppRoutes.scan,
                 name: 'scan',
-                builder: (BuildContext context, GoRouterState state) => const ScanPage(),
+                builder: (BuildContext context, GoRouterState state) => ScanPage(
+                  scannerBuilder: scannerBuilder,
+                  onProductFound: (ProductLookupResult result) async {
+                    await context.push(AppRoutes.addFood, extra: result);
+                  },
+                  onManualFallback: (String barcode) async {
+                    await context.push(
+                      Uri(
+                        path: AppRoutes.addFood,
+                        queryParameters: <String, String>{
+                          'barcode': barcode,
+                        },
+                      ).toString(),
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -123,15 +144,21 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
                   );
                   return MinePage(
                     config: AppConfig.current,
-                    onOpenNotificationSettings: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('通知设置正在准备中')),
-                      );
-                    },
+                    onOpenNotificationSettings: () => context.push(AppRoutes.notificationSettings),
                     onClearData: () => container.read(clearLocalDataServiceProvider).clear(),
                     onCleared: () => context.go(AppRoutes.home),
                   );
                 },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'notifications',
+                    name: 'notificationSettings',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        NotificationSettingsPage(
+                          onBack: () => context.pop(),
+                        ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -140,16 +167,28 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
       GoRoute(
         path: AppRoutes.addFood,
         name: 'addFood',
-        builder: (BuildContext context, GoRouterState state) => AddFoodPage(
-          initialBarcode: state.uri.queryParameters['barcode'],
-          onSaved: (Food food) {
-            context.go(AppRoutes.foods);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('食品已添加')));
-          },
-          onCancel: () => context.pop(),
-        ),
+        builder: (BuildContext context, GoRouterState state) {
+          final ProductLookupResult? lookup = state.extra is ProductLookupResult
+              ? state.extra! as ProductLookupResult
+              : null;
+          final ProductSuggestion? product = lookup?.product;
+          return AddFoodPage(
+            initialBarcode: product?.barcode ?? state.uri.queryParameters['barcode'],
+            initialName: product?.name,
+            initialBrand: product?.brand,
+            initialSpecification: product?.specification,
+            initialRemoteImageUrl: product?.imageUrl,
+            initialCategoryId: product?.suggestedCategoryId,
+            showRemoteDataWarning: lookup?.requiresConfirmation ?? false,
+            onSaved: (Food food) {
+              context.go(AppRoutes.foods);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('食品已添加')));
+            },
+            onCancel: () => context.pop(),
+          );
+        },
       ),
     ],
   );

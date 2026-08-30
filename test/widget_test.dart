@@ -8,12 +8,12 @@ void main() {
   testWidgets('显示粮知占位首页', (WidgetTester tester) async {
     await tester.pumpWidget(
       withTestScope(
-      LiangZhiApp(
-        config: AppConfig(
-          environment: AppEnvironment.production,
-          openFoodFactsBaseUri: Uri.parse('https://example.com'),
+        LiangZhiApp(
+          config: AppConfig(
+            environment: AppEnvironment.production,
+            openFoodFactsBaseUri: Uri.parse('https://example.com'),
+          ),
         ),
-      ),
       ),
     );
 

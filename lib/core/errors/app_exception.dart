@@ -27,6 +27,10 @@ final class NetworkUnavailableException extends AppException {
   const NetworkUnavailableException([super.message = '网络暂时不可用']);
 }
 
+final class NetworkTimeoutException extends AppException {
+  const NetworkTimeoutException([super.message = '商品查询超时']);
+}
+
 final class RemoteNotFoundException extends AppException {
   const RemoteNotFoundException([super.message = '暂未查询到该商品']);
 }

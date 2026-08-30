@@ -37,48 +37,54 @@ void main() {
   });
 
   test('食品表写入并读取完整字段', () async {
-    await database.into(database.categories).insert(
-      CategoriesCompanion.insert(
-        id: 'category_dairy',
-        name: '乳制品',
-        isSystem: const Value<bool>(true),
-        createdAt: 1,
-        updatedAt: 1,
-      ),
-    );
-    await database.into(database.locations).insert(
-      LocationsCompanion.insert(
-        id: 'location_fridge',
-        name: '冰箱冷藏',
-        isSystem: const Value<bool>(true),
-        createdAt: 1,
-        updatedAt: 1,
-      ),
-    );
-    await database.into(database.foods).insert(
-      FoodsCompanion.insert(
-        id: 'food-1',
-        barcode: const Value<String>('6901234567892'),
-        name: '鲜牛奶',
-        brand: const Value<String>('粮知牧场'),
-        specification: const Value<String>('250ml'),
-        imageLocalPath: const Value<String>('foods/milk.jpg'),
-        imageRemoteUrl: const Value<String>('https://example.com/milk.jpg'),
-        categoryId: const Value<String>('category_dairy'),
-        locationId: const Value<String>('location_fridge'),
-        quantity: 2.5,
-        unit: const Value<String>('盒'),
-        expiryInputType: 'production_shelf_life',
-        productionDate: const Value<String>('2026-07-01'),
-        shelfLifeValue: const Value<int>(30),
-        shelfLifeUnit: const Value<String>('day'),
-        expiryDate: '2026-07-31',
-        reminderDaysBefore: const Value<int>(3),
-        status: 'active',
-        createdAt: 1,
-        updatedAt: 2,
-      ),
-    );
+    await database
+        .into(database.categories)
+        .insert(
+          CategoriesCompanion.insert(
+            id: 'category_dairy',
+            name: '乳制品',
+            isSystem: const Value<bool>(true),
+            createdAt: 1,
+            updatedAt: 1,
+          ),
+        );
+    await database
+        .into(database.locations)
+        .insert(
+          LocationsCompanion.insert(
+            id: 'location_fridge',
+            name: '冰箱冷藏',
+            isSystem: const Value<bool>(true),
+            createdAt: 1,
+            updatedAt: 1,
+          ),
+        );
+    await database
+        .into(database.foods)
+        .insert(
+          FoodsCompanion.insert(
+            id: 'food-1',
+            barcode: const Value<String>('6901234567892'),
+            name: '鲜牛奶',
+            brand: const Value<String>('粮知牧场'),
+            specification: const Value<String>('250ml'),
+            imageLocalPath: const Value<String>('foods/milk.jpg'),
+            imageRemoteUrl: const Value<String>('https://example.com/milk.jpg'),
+            categoryId: const Value<String>('category_dairy'),
+            locationId: const Value<String>('location_fridge'),
+            quantity: 2.5,
+            unit: const Value<String>('盒'),
+            expiryInputType: 'production_shelf_life',
+            productionDate: const Value<String>('2026-07-01'),
+            shelfLifeValue: const Value<int>(30),
+            shelfLifeUnit: const Value<String>('day'),
+            expiryDate: '2026-07-31',
+            reminderDaysBefore: const Value<int>(3),
+            status: 'active',
+            createdAt: 1,
+            updatedAt: 2,
+          ),
+        );
 
     final Food saved = await database.select(database.foods).getSingle();
     expect(saved.name, '鲜牛奶');
@@ -93,19 +99,21 @@ void main() {
   });
 
   test('食品表拒绝不一致到期字段', () async {
-    final Future<int> insert = database.into(database.foods).insert(
-      FoodsCompanion.insert(
-        id: 'invalid-food',
-        name: '无效食品',
-        quantity: 1,
-        expiryInputType: 'direct',
-        productionDate: const Value<String>('2026-07-01'),
-        expiryDate: '2026-07-31',
-        status: 'active',
-        createdAt: 1,
-        updatedAt: 1,
-      ),
-    );
+    final Future<int> insert = database
+        .into(database.foods)
+        .insert(
+          FoodsCompanion.insert(
+            id: 'invalid-food',
+            name: '无效食品',
+            quantity: 1,
+            expiryInputType: 'direct',
+            productionDate: const Value<String>('2026-07-01'),
+            expiryDate: '2026-07-31',
+            status: 'active',
+            createdAt: 1,
+            updatedAt: 1,
+          ),
+        );
 
     await expectLater(insert, throwsA(isA<SqliteException>()));
   });
@@ -131,12 +139,14 @@ void main() {
       ]);
     });
 
-    final List<Category> categories = await (database.select(
-      database.categories,
-    )..orderBy(<OrderClauseGenerator<$CategoriesTable>>[
-      ($CategoriesTable table) => OrderingTerm.asc(table.sortOrder),
-      ($CategoriesTable table) => OrderingTerm.asc(table.createdAt),
-    ])).get();
+    final List<Category> categories =
+        await (database.select(
+              database.categories,
+            )..orderBy(<OrderClauseGenerator<$CategoriesTable>>[
+              ($CategoriesTable table) => OrderingTerm.asc(table.sortOrder),
+              ($CategoriesTable table) => OrderingTerm.asc(table.createdAt),
+            ]))
+            .get();
 
     expect(categories.map((Category item) => item.id), <String>[
       'category_system',
@@ -145,14 +155,16 @@ void main() {
     expect(categories.first.isSystem, isTrue);
 
     await expectLater(
-      database.into(database.categories).insert(
-        CategoriesCompanion.insert(
-          id: 'category_system',
-          name: '重复',
-          createdAt: 3,
-          updatedAt: 3,
-        ),
-      ),
+      database
+          .into(database.categories)
+          .insert(
+            CategoriesCompanion.insert(
+              id: 'category_system',
+              name: '重复',
+              createdAt: 3,
+              updatedAt: 3,
+            ),
+          ),
       throwsA(isA<SqliteException>()),
     );
   });
@@ -179,24 +191,28 @@ void main() {
       ]);
     });
 
-    final List<Location> locations = await (database.select(
-      database.locations,
-    )..orderBy(<OrderClauseGenerator<$LocationsTable>>[
-      ($LocationsTable table) => OrderingTerm.asc(table.sortOrder),
-      ($LocationsTable table) => OrderingTerm.asc(table.createdAt),
-    ])).get();
+    final List<Location> locations =
+        await (database.select(
+              database.locations,
+            )..orderBy(<OrderClauseGenerator<$LocationsTable>>[
+              ($LocationsTable table) => OrderingTerm.asc(table.sortOrder),
+              ($LocationsTable table) => OrderingTerm.asc(table.createdAt),
+            ]))
+            .get();
 
     expect(locations.map((Location item) => item.name), <String>['冰箱冷藏', '厨房橱柜']);
 
     await expectLater(
-      database.into(database.locations).insert(
-        LocationsCompanion.insert(
-          id: 'location_fridge',
-          name: '重复',
-          createdAt: 3,
-          updatedAt: 3,
-        ),
-      ),
+      database
+          .into(database.locations)
+          .insert(
+            LocationsCompanion.insert(
+              id: 'location_fridge',
+              name: '重复',
+              createdAt: 3,
+              updatedAt: 3,
+            ),
+          ),
       throwsA(isA<SqliteException>()),
     );
   });
@@ -259,15 +275,17 @@ void main() {
     expect(foundExpiry, DateTime.utc(2026, 7, 31, 9));
     expect(notFoundExpiry, DateTime.utc(2026, 7, 2, 9));
 
-    await database.into(database.barcodeProductCache).insert(
-      BarcodeProductCacheCompanion.insert(
-        barcode: '6901234567892',
-        lookupStatus: 'found',
-        productName: const Value<String>('测试商品'),
-        fetchedAt: fetchedAt.millisecondsSinceEpoch,
-        expiresAt: foundExpiry.millisecondsSinceEpoch,
-      ),
-    );
+    await database
+        .into(database.barcodeProductCache)
+        .insert(
+          BarcodeProductCacheCompanion.insert(
+            barcode: '6901234567892',
+            lookupStatus: 'found',
+            productName: const Value<String>('测试商品'),
+            fetchedAt: fetchedAt.millisecondsSinceEpoch,
+            expiresAt: foundExpiry.millisecondsSinceEpoch,
+          ),
+        );
     final BarcodeProductCacheData saved = await database
         .select(database.barcodeProductCache)
         .getSingle();
@@ -290,15 +308,17 @@ void main() {
       await temporaryDirectory.delete(recursive: true);
     });
 
-    await versionOne.into(versionOne.categories).insert(
-      CategoriesCompanion.insert(
-        id: 'category_test',
-        name: '测试分类',
-        createdAt: 1,
-        updatedAt: 1,
-        isSystem: const Value<bool>(false),
-      ),
-    );
+    await versionOne
+        .into(versionOne.categories)
+        .insert(
+          CategoriesCompanion.insert(
+            id: 'category_test',
+            name: '测试分类',
+            createdAt: 1,
+            updatedAt: 1,
+            isSystem: const Value<bool>(false),
+          ),
+        );
     await versionOne.close();
 
     final _VersionTwoDatabase versionTwo = _VersionTwoDatabase(NativeDatabase(databaseFile));

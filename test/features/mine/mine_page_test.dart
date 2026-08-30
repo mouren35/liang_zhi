@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liangzhi/app/app_config.dart';
+import 'package:liangzhi/app/app_runtime_info.dart';
 import 'package:liangzhi/features/mine/mine_page.dart';
 
 void main() {
   testWidgets('显示版本、隐私和 Open Food Facts 来源', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(home: _page(onClearData: () async {})));
 
-    expect(find.text('版本 0.1.0（1）'), findsOneWidget);
+    await tester.pump();
+    expect(find.text('版本 9.8.7（构建 42）'), findsOneWidget);
+    expect(find.text('正式环境'), findsOneWidget);
     expect(find.text('Open Food Facts'), findsOneWidget);
     expect(find.text('隐私说明'), findsOneWidget);
   });
@@ -43,5 +46,10 @@ MinePage _page({required Future<void> Function() onClearData}) {
     onOpenNotificationSettings: () {},
     onClearData: onClearData,
     onCleared: () {},
+    loadRuntimeInfo: () async => const AppRuntimeInfo(
+      name: '粮知',
+      version: '9.8.7',
+      buildNumber: '42',
+    ),
   );
 }

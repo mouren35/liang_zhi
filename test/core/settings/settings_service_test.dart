@@ -21,16 +21,19 @@ void main() {
     expect(defaults.dailySummaryEnabled, isTrue);
     expect(defaults.longTermReminderEnabled, isTrue);
     expect(defaults.longTermReminderDays, 30);
+    expect(defaults.notificationPermissionRequested, isFalse);
 
     await service.setHasCompletedInitialLaunch(true);
     await service.setReminderTime('08:30');
     await service.setGlobalReminderDaysOverride(5);
     await service.setLongTermReminderDays(45);
+    await service.setNotificationPermissionRequested(true);
     final AppSettings saved = service.read();
     expect(saved.hasCompletedInitialLaunch, isTrue);
     expect(saved.reminderTime, '08:30');
     expect(saved.globalReminderDaysOverride, 5);
     expect(saved.longTermReminderDays, 45);
+    expect(saved.notificationPermissionRequested, isTrue);
   });
 
   test('未知界面偏好和非法设置回退安全默认值', () async {
@@ -57,10 +60,12 @@ void main() {
     await service.setHasCompletedInitialLaunch(true);
     await service.setFoodListViewMode(FoodListViewMode.list);
     await service.setRemindersEnabled(false);
+    await service.setNotificationPermissionRequested(true);
 
     await service.clear();
 
     expect(service.read().hasCompletedInitialLaunch, isFalse);
     expect(service.read().remindersEnabled, isTrue);
+    expect(service.read().notificationPermissionRequested, isFalse);
   });
 }
